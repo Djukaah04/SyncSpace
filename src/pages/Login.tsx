@@ -8,18 +8,22 @@ import {
 } from "firebase/auth";
 import { auth, db } from "../config/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import User from "../models/User";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { setUsersRedux } from "../store/features/usersSlice";
 
-interface User {
-  firstName: string;
-  lastName: string;
-  username: string;
-}
 const Login = () => {
   const { register, handleSubmit } = useForm();
   const [user, setUser] = useState<any>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [users, setUsers] = useState<User[]>([]);
+
+  const dispatch = useDispatch<AppDispatch>();
+  const usersListFromStore = useSelector(
+    (state: RootState) => state.users.list
+  );
 
   onAuthStateChanged(auth, (user) => {
     console.log("%c changed!", "color: lightgreen; font-size: 30px");
@@ -54,6 +58,7 @@ const Login = () => {
   };
 
   useEffect(() => {
+    dispatch(fetchUsers());
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       if (user) {
         setUser(u);
@@ -68,26 +73,16 @@ const Login = () => {
     };
   }, []);
 
-  useEffect(() => {
-    fetchUsers();
-  });
-
-  const fetchUsers = async () => {
+  useEffect(() => {});
+  const fetchUsers = () => async (dispatch) => {
     const usersRef = collection(db, "users");
-    console.log("%c usersRef", "color: orange; font-size: 30px", usersRef);
     const snapshot = await getDocs(usersRef);
-    snapshot.docs.forEach((doc) => {
-      console.log(
-        "%c doc.data()",
-        "color: orange; font-size: 30px",
-        doc.data()
-      );
-    });
-    console.log(
-      "%c snapshot.docs",
-      "color: lightgreen; font-size: 30px",
-      snapshot.docs
-    );
+    const usersList: User[] = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data() as Omit<User, "id">),
+    }));
+
+    dispatch(setUsersRedux(usersList));
   };
   return (
     <>
@@ -112,8 +107,8 @@ const Login = () => {
 
       <div>
         Users:
-        {users.map((user) => (
-          <div>
+        {usersListFromStore.map((user) => (
+          <div key={user.id}>
             {user.firstName} {user.lastName}
           </div>
         ))}

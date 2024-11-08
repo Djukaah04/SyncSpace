@@ -5,15 +5,14 @@ import Login from "./pages/Login";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import Home from "./pages/Home";
-import { auth, db } from "./config/firebase";
+import { auth } from "./config/firebase";
 
 function App() {
-  console.log("%c db", "color: orange; font-size: 30px", db);
-  console.log(
-    "%c auth",
-    "color: orange; font-size: 30px",
-    auth.currentUser?.email
-  );
+  // console.log(
+  //   "%c auth",
+  //   "color: orange; font-size: 30px",
+  //   auth.currentUser?.email
+  // );
   return (
     <div className="App">
       <header className="App-header">
