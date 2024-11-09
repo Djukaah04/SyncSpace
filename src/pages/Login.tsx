@@ -1,79 +1,45 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import "../styles/Login.scss";
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth, db } from "../config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import User from "../models/User";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 import { setUsersRedux } from "../store/features/usersSlice";
 
+import { useNavigate } from "react-router-dom";
+
+interface LoginFormInputs {
+  email: string;
+  password: string;
+}
+
 const Login = () => {
-  const { register, handleSubmit } = useForm();
-  const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
+
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const { register, handleSubmit } = useForm<LoginFormInputs>();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [users, setUsers] = useState<User[]>([]);
 
-  const dispatch = useDispatch<AppDispatch>();
-  const usersListFromStore = useSelector(
-    (state: RootState) => state.users.list
-  );
-
-  onAuthStateChanged(auth, (user) => {
-    console.log("%c changed!", "color: lightgreen; font-size: 30px");
-  });
-  //ovo ce iz servisa kasnije
-  const loginUser = async (email: string, password) => {
+  const onLogIn: SubmitHandler<LoginFormInputs> = async (
+    formData: LoginFormInputs
+  ) => {
     try {
-      const userCredentials = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log(
-        "%c userCredentials",
-        "color: orange; font-size: 30px",
-        userCredentials
-      );
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      navigate("/");
     } catch (err) {
       console.log("%c ne valja", "color: red; font-size: 30px", err);
     }
   };
-  const onLogIn = (e) => {
-    console.log("%c e", "color: orange; font-size: 30px", e);
-    // e.preventDefault();
-    loginUser(email, password);
-  };
   const onLogOut = () => {
     signOut(auth);
   };
-  const log = () => {
-    console.log("%c curr", "color: orange; font-size: 30px", auth.currentUser);
-  };
 
-  useEffect(() => {
-    dispatch(fetchUsers());
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      if (user) {
-        setUser(u);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => {
-      console.log("%c unsubscribe!", "color: lightgreen; font-size: 30px");
-      unsubscribe();
-    };
-  }, []);
-
-  useEffect(() => {});
   const fetchUsers = () => async (dispatch) => {
     const usersRef = collection(db, "users");
     const snapshot = await getDocs(usersRef);
@@ -100,18 +66,14 @@ const Login = () => {
 
         <p>Email is:{email}</p>
         <p>Password is:{password}</p>
-        <p onClick={log}>Auth email: {auth.currentUser?.email}</p>
+        <p>Auth email: {auth.currentUser?.email}</p>
         <input type="submit" />
       </form>
       <button onClick={onLogOut}>Log out</button>
 
       <div>
-        Users:
-        {usersListFromStore.map((user) => (
-          <div key={user.id}>
-            {user.firstName} {user.lastName}
-          </div>
-        ))}
+        User:
+        {user && user.email}
       </div>
     </>
   );

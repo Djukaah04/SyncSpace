@@ -1,17 +1,25 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import User from "../../models/User";
 
-const initialState = {};
+interface AuthState {
+  user: User | null;
+}
+const initialState: AuthState = {
+  user: null,
+};
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // increment(state) {
-    //   state.value += 1;
-    // },
-    // Additional reducers can be added here
+    setUser: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
+    },
+    clearUser: (state) => {
+      state.user = null;
+    },
   },
 });
 
-// export const { increment } = authSlice.actions;
+export const { setUser, clearUser } = authSlice.actions;
 export default authSlice.reducer;

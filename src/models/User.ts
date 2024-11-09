@@ -1,8 +1,7 @@
 interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  username: string;
+  uid: string;
+  email: string | null;
+  displayName: string | null;
 }
 
 export default User;

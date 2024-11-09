@@ -5,7 +5,7 @@ import usersReducer from "./features/usersSlice";
 // import bookingsReducer from '../features/bookings/bookingsSlice';
 
 const rootReducer = combineReducers({
-  // auth: authReducer,
+  auth: authReducer,
   users: usersReducer,
 });
 

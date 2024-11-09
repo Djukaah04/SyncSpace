@@ -20,7 +20,7 @@ const usersSlice = createSlice({
       state.list.push(action.payload);
     },
     deleteUser: (state, action: PayloadAction<string>) => {
-      state.list = state.list.filter((user) => user.id === action.payload);
+      state.list = state.list.filter((user) => user.uid === action.payload);
     },
   },
 });
