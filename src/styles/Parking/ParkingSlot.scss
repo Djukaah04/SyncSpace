@@ -1,0 +1,13 @@
+.parking-slot-container {
+  position: relative;
+  z-index: 1;
+}
+
+.parking-slot {
+  border: 1px solid black;
+  padding: 5px;
+  margin: 10px;
+  min-width: 150px;
+  // background-color: #6a4431;
+  background-color: #dbd3be;
+}

@@ -1,14 +1,8 @@
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import "../styles/Login.scss";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth, db } from "../config/firebase";
-import { collection, getDocs } from "firebase/firestore";
-import User from "../models/User";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
-import { setUsersRedux } from "../store/features/usersSlice";
-
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../config/firebase";
 import { useNavigate } from "react-router-dom";
 
 interface LoginFormInputs {
@@ -19,12 +13,15 @@ interface LoginFormInputs {
 const Login = () => {
   const navigate = useNavigate();
 
-  const user = useSelector((state: RootState) => state.auth.user);
-
-  const { register, handleSubmit } = useForm<LoginFormInputs>();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<LoginFormInputs>({
+    mode: "onBlur",
+    reValidateMode: "onChange",
+  });
 
   const onLogIn: SubmitHandler<LoginFormInputs> = async (
     formData: LoginFormInputs
@@ -33,49 +30,58 @@ const Login = () => {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
       navigate("/");
     } catch (err) {
-      console.log("%c ne valja", "color: red; font-size: 30px", err);
+      setError("email", { type: "manual", message: "Invalid username" });
+      setError("password", { type: "manual", message: "Invalid password" });
     }
   };
-  const onLogOut = () => {
-    signOut(auth);
-  };
 
-  const fetchUsers = () => async (dispatch) => {
-    const usersRef = collection(db, "users");
-    const snapshot = await getDocs(usersRef);
-    const usersList: User[] = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...(doc.data() as Omit<User, "id">),
-    }));
-
-    dispatch(setUsersRedux(usersList));
-  };
   return (
-    <>
-      <form className="form" onSubmit={handleSubmit(onLogIn)}>
+    <form className="login-form" onSubmit={handleSubmit(onLogIn)}>
+      <div className="login-form__input-row">
+        <label htmlFor="login-email">
+          Email <span className="asterix">*</span>
+        </label>
         <input
-          {...register("email")}
-          onChange={(e) => setEmail(e.target.value)}
+          id="login-email"
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+              message: "Please enter a valid email address",
+            },
+          })}
           placeholder="Email"
         />
+        {errors.email && (
+          <div className="error-text">{errors.email.message}</div>
+        )}
+      </div>
+      <div className="login-form__input-row">
+        <label htmlFor="login-password">
+          Password <span className="asterix">*</span>
+        </label>
         <input
-          {...register("password")}
-          onChange={(e) => setPassword(e.target.value)}
+          {...register("password", {
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters long",
+            },
+          })}
+          type="password"
           placeholder="Password"
         />
-
-        <p>Email is:{email}</p>
-        <p>Password is:{password}</p>
-        <p>Auth email: {auth.currentUser?.email}</p>
-        <input type="submit" />
-      </form>
-      <button onClick={onLogOut}>Log out</button>
-
-      <div>
-        User:
-        {user && user.email}
+        {errors.password && (
+          <div className="error-text">{errors.password.message}</div>
+        )}
       </div>
-    </>
+      <input type="submit" value="Login" />
+      <div className="login-form__or-login-with">
+        <span className="or-login-with__line"></span>
+        <span className="or-login-with__text">or</span>
+      </div>
+      <button className="login-form__google-option">Login with Google</button>
+    </form>
   );
 };
 
