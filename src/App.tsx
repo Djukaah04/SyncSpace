@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
-import "./styles/App.scss";
+import "./styles/base/App.scss";
 
-import Login from "./pages/Login";
+import Login from "./pages/login/Login";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ProtectedRoutes from "./utils/ProtectedRoutes";
-import Home from "./pages/Home";
+import ProtectedRoutes from "./utils/protected-routes/ProtectedRoutes";
 import { auth } from "./config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import User from "./models/User";
+import UserInfo from "./models/UserInfo";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "./store";
 import { clearUser, setUser } from "./store/features/authSlice";
+import Home from "./pages/home/Home";
+import Register from "./pages/register/Register";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,10 +21,11 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (authUser) => {
       if (authUser) {
-        const user: User = {
+        const user: UserInfo = {
           uid: authUser.uid,
           email: authUser.email,
           displayName: authUser.displayName,
+          age: 26,
         };
         dispatch(setUser(user));
       } else {
@@ -44,9 +46,15 @@ function App() {
 
   return (
     <div className="app">
-      <BrowserRouter>
+      <BrowserRouter
+        future={{
+          v7_relativeSplatPath: true,
+          v7_startTransition: true,
+        }}
+      >
         <Routes>
           <Route element={<Login />} path="/login"></Route>
+          <Route element={<Register />} path="/register"></Route>
           <Route element={<ProtectedRoutes />}>
             <Route element={<Home />} path="/*"></Route>
           </Route>

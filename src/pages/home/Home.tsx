@@ -1,14 +1,13 @@
 import React from "react";
-
-import "../styles/Home.scss";
+import "./Home.scss";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import Office from "../components/Office";
-import Parking from "../components/parking/Parking";
 import { signOut } from "firebase/auth";
-import { auth } from "../config/firebase";
 import { useSelector } from "react-redux";
-import { RootState } from "../store";
-import ChatRoom from "../components/chat/ChatRoom";
+import { RootState } from "../../store";
+import { auth } from "../../config/firebase";
+import Parking from "../../components/parking/Parking";
+import Office from "../../components/Office";
+import ChatRoom from "../../components/chat/chat-room/ChatRoom";
 
 enum NavOptions {
   PARKING = "PARKING",

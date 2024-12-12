@@ -1,0 +1,25 @@
+.form {
+  border: 1px solid black;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  height: fit-content;
+  width: fit-content;
+  padding: 30px;
+}
+
+.form__input-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.or-login-with__text {
+  z-index: 2;
+  padding: 0 5px;
+  background-color: white;
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ParkingSlot from "./ParkingSlot";
-import "../../styles/Parking/Parking.scss";
+import ParkingSlot from "./parking-slot/ParkingSlot";
+import "./Parking.scss";
 import ParkingSlotInfo from "../../models/ParkingSlotInfo";
 
 type ParkingGrid = ParkingSlotInfo[][];

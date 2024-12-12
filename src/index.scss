@@ -1,2 +1,4 @@
-@import "./styles/Global.scss";
-@import "./styles/util.scss";
+@import "./styles/base/_global.scss";
+@import "./styles/helpers/_form.scss";
+@import "react-date-range/dist/styles.css";
+@import "react-date-range/dist/theme/default.css";

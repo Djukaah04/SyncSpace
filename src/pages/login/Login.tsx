@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import "../styles/Login.scss";
+import "./Login.scss";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../config/firebase";
+import { auth } from "../../config/firebase";
 import { useNavigate } from "react-router-dom";
 
 interface LoginFormInputs {
@@ -35,9 +35,13 @@ const Login = () => {
     }
   };
 
+  const goToRegister = () => {
+    navigate("/register");
+  };
   return (
-    <form className="login-form" onSubmit={handleSubmit(onLogIn)}>
-      <div className="login-form__input-row">
+    <form className="form" onSubmit={handleSubmit(onLogIn)}>
+      <h1>Log In</h1>
+      <div className="form__input-row">
         <label htmlFor="login-email">
           Email <span className="asterix">*</span>
         </label>
@@ -56,7 +60,7 @@ const Login = () => {
           <div className="error-text">{errors.email.message}</div>
         )}
       </div>
-      <div className="login-form__input-row">
+      <div className="form__input-row">
         <label htmlFor="login-password">
           Password <span className="asterix">*</span>
         </label>
@@ -76,11 +80,12 @@ const Login = () => {
         )}
       </div>
       <input type="submit" value="Login" />
-      <div className="login-form__or-login-with">
+      <button onClick={goToRegister}>Register</button>
+      <div className="or-login-with">
         <span className="or-login-with__line"></span>
         <span className="or-login-with__text">or</span>
       </div>
-      <button className="login-form__google-option">Login with Google</button>
+      <button className="google-option">Login with Google</button>
     </form>
   );
 };

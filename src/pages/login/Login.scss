@@ -1,24 +1,4 @@
-.login-form {
-  border: 1px solid black;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  max-width: 800px;
-  margin: 0 auto;
-  height: fit-content;
-  width: fit-content;
-  padding: 30px;
-}
-
-.login-form__input-row {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-}
-
-.login-form__or-login-with {
+.or-login-with {
   margin-top: 15px;
   display: flex;
   position: relative;
@@ -39,13 +19,13 @@
   background-color: white;
 }
 
-.login-form__google-option {
+.google-option {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 10px;
-  background: url("../assets/icons/gmail-logo.png") no-repeat left center;
+  background: url("../../assets/icons/gmail-logo.png") no-repeat left center;
   background-size: 20px;
   border: none;
   cursor: pointer;
