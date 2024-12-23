@@ -1,6 +1,13 @@
 .parking {
   display: flex;
+  flex-direction: column;
   justify-content: space-evenly;
   flex-wrap: wrap;
   background-color: pink;
+}
+
+.parking-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }

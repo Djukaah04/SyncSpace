@@ -19,7 +19,7 @@ const Home = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   const onOptionChoose = (option: NavOptions) => {
-    navigate(option.toLowerCase());
+    navigate(`/${option.toLowerCase()}`);
   };
   const onLogout = () => {
     signOut(auth);

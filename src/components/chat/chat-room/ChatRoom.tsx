@@ -3,13 +3,14 @@ import React from "react";
 import { db } from "../../../config/firebase";
 import { setUsers } from "../../../store/features/usersSlice";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../store";
+import { AppDispatch, RootState } from "../../../store";
 import UserInfo from "../../../models/UserInfo";
 
 const CharRoom = () => {
   const users = useSelector((state: RootState) => state.users.list);
 
-  const fetchUsers = () => async (dispatch) => {
+  const fetchUsers = () => async (dispatch: AppDispatch) => {
+    console.log("%c usli", "color: lightgreen; font-size: 25px");
     const usersRef = collection(db, "users");
     const snapshot = await getDocs(usersRef);
     const usersList: UserInfo[] = snapshot.docs.map((doc) => ({
