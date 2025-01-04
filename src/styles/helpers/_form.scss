@@ -4,8 +4,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  max-width: 800px;
+  align-items: stretch;
+  max-width: 1000px;
   margin: 0 auto;
   height: fit-content;
   width: fit-content;
@@ -13,9 +13,11 @@
 }
 
 .form__input-row {
+  position: relative;
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
+  min-width: 300px;
 }
 
 .or-login-with__text {

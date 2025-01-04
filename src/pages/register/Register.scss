@@ -1,0 +1,54 @@
+.register-form {
+  //   position: relative;
+  background-color: white;
+}
+
+.register-form__title {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.back-logo {
+  //   position: absolute;
+  margin-top: -20px;
+  height: 25px;
+  cursor: pointer;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.picture-upload {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 0 5px;
+  cursor: pointer;
+}
+
+.upload-logo {
+  height: 30px;
+}
+
+.profile-preview-container {
+  text-align: center;
+  height: 150px;
+
+  img {
+    object-fit: cover;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+  }
+}
+
+.register-container {
+  text-align: center;
+}
+
+.register {
+  width: fit-content;
+  font-size: 15px;
+}
