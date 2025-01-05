@@ -1,0 +1,125 @@
+.room {
+}
+
+.room__header {
+  text-align: center;
+}
+
+.header__participants {
+  display: flex;
+  justify-content: space-between;
+}
+
+.participant__info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat {
+  position: relative;
+
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid red;
+
+  background-color: white;
+
+  // overflow: auto;
+  overflow-y: scroll;
+  height: 400px;
+
+  * {
+    overflow-anchor: none;
+  }
+
+  #anchor {
+    background-color: blue;
+    overflow-anchor: auto;
+    height: 40px;
+    width: 40px;
+  }
+}
+
+.message-row__time-info {
+  display: none;
+  color: black;
+  font-size: 15px;
+  margin: 0 5px;
+}
+
+.message-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: white;
+
+  &:hover {
+    .message-row__time-info {
+      display: block;
+    }
+  }
+}
+
+.message-row--me {
+  justify-content: flex-end;
+
+  .message {
+    background-color: rgb(0, 0, 255);
+  }
+
+  .message--is-sending {
+    margin-right: 20px;
+    background-color: rgba(0, 0, 255, 0.8);
+  }
+}
+
+.message-row--friend {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+
+  .message {
+    background-color: rgb(128, 128, 128);
+  }
+
+  .message--is-sending {
+    margin-left: 20px;
+    background-color: rgba(128, 128, 128, 0.8);
+  }
+}
+
+.message-row:last-of-type {
+  margin-bottom: 10px;
+}
+
+.message {
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.chat__footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  background-color: white;
+
+  width: 100%;
+
+  display: flex;
+  gap: 5px;
+}
+
+.footer__message-input {
+  flex-grow: 1;
+  //   border-radius: 5px;
+}
+
+.footer__send-button {
+  //   border-radius: 5px;
+}

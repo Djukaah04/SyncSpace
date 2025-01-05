@@ -1,9 +1,8 @@
 import React from "react";
-import "./Modal.scss";
 import ReactDom from "react-dom";
 
 const Modal = ({ children, isOpen, onClose }) => {
-  if (!isOpen) return null;
+  if (!isOpen) return;
 
   return ReactDom.createPortal(
     <>

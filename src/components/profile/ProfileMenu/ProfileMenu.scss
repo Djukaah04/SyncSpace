@@ -1,0 +1,19 @@
+.profile-menu {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  text-align: left;
+  height: 100px;
+  background-color: white;
+  border: 1px solid black;
+  padding: 10px;
+  list-style-type: none;
+}
+
+.profile-menu__item {
+  cursor: pointer;
+
+  &:hover {
+    background-color: wheat;
+  }
+}

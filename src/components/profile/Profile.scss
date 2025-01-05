@@ -1,0 +1,22 @@
+.car-select-list {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: stretch;
+  background-color: white;
+  padding: 0;
+}
+
+.car-select-item {
+  display: flex;
+  align-items: center;
+  border: 2px solid transparent;
+  user-select: none;
+  &:hover:not(.car-select-item--selected) {
+    border: 2px dashed red;
+  }
+}
+
+.car-select-item--selected {
+  border: 2px solid black;
+}
