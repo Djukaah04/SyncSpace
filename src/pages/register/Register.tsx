@@ -1,13 +1,12 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import React, { ChangeEvent, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { auth, db, storage } from "../../config/firebase";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import UserInfo from "../../models/UserInfo";
-import UserStatus from "../../enums/UserStatus";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import "./Register.scss";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { auth, db, storage } from "../../config/firebase";
+import { SubmitHandler, useForm } from "react-hook-form";
+import React, { ChangeEvent, useState } from "react";
+import UserStatus from "../../enums/UserStatus";
+import { useNavigate } from "react-router-dom";
+import UserInfo from "../../models/UserInfo";
 
 interface RegisterFormInputs {
   email: string;

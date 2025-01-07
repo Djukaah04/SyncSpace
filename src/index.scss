@@ -1,4 +1,20 @@
+// ----------- UTILS -----------
+@import "./styles/helpers/_variables.scss";
 @import "./styles/base/_global.scss";
 @import "./styles/helpers/_form.scss";
+@import "./utils/modal/Modal.scss";
 @import "react-date-range/dist/styles.css";
 @import "react-date-range/dist/theme/default.css";
+
+// ----------- PAGES -----------
+@import "./pages/home/Home.scss";
+@import "./pages/login/Login.scss";
+@import "./pages/register/Register.scss";
+
+// ----------- COMPONENTS -----------
+@import "./components/chat/chat-room/ChatRoom.scss";
+@import "./components/chat/chat-room/room/Room.scss";
+@import "./components/parking/Parking.scss";
+@import "./components/parking/parking-slot/ParkingSlot.scss";
+@import "./components/profile/Profile.scss";
+@import "./components/profile/ProfileMenu/ProfileMenu.scss";

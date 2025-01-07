@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import "./Login.scss";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../config/firebase";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 interface LoginFormInputs {
   email: string;
@@ -12,6 +13,7 @@ interface LoginFormInputs {
 
 const Login = () => {
   const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.user);
 
   const {
     register,
@@ -38,6 +40,10 @@ const Login = () => {
   const goToRegister = () => {
     navigate("/register");
   };
+
+  useEffect(() => {
+    if (user) navigate("/");
+  }, [navigate, user]);
   return (
     <form className="form" onSubmit={handleSubmit(onLogIn)}>
       <h1>Log In</h1>
