@@ -1,26 +1,31 @@
 .parking-slot-container {
-  position: relative;
   display: flex;
   justify-content: center;
-
   flex: 1 0 auto;
-  border: 1px solid yellow;
-  z-index: 1;
 }
 
 .parking-slot {
-  border: 1px solid black;
+  border: 2px dashed rgba(128, 128, 128, 0.6);
   padding: 5px;
-  margin: 10px;
-  min-width: 150px;
+  height: 100px;
+  min-width: 65px;
   // background-color: #6a4431;
-  background-color: #dbd3be;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $white;
+
+  &:hover {
+    cursor: pointer;
+    border-color: rgba(0, 0, 0, 0.5);
+  }
 }
 
-.slot-free {
-  background-color: rgba(117, 225, 84, 0.361);
+.parking-slot__car {
+  height: 100%;
+  // width: 40px;
+  // width: 100%;
 }
 
-.slot-taken {
-  background-color: #e24d3c96;
+@media (min-width: 992px) {
 }

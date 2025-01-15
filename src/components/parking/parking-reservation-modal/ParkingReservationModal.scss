@@ -1,0 +1,14 @@
+.parking-reservation {
+  display: flex;
+  flex-direction: column;
+}
+
+.parking-reservation__title {
+  text-align: center;
+  margin-top: 0;
+}
+
+.parking-reservation__reserve {
+  text-transform: uppercase;
+  padding: 10px;
+}

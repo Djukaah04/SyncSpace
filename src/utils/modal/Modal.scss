@@ -4,8 +4,9 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
-  padding: 50px;
+  padding: 40px;
   z-index: 1000;
+  border-radius: 10px;
 }
 
 .overlay {
@@ -16,4 +17,28 @@
   bottom: 0;
   background-color: rgba($color: #000000, $alpha: 0.7);
   z-index: 1000;
+}
+
+.close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  width: 40px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    .x-logo {
+      width: 28px;
+    }
+  }
+}
+
+.x-logo {
+  width: 25px;
 }

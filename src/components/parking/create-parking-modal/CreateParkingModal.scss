@@ -1,0 +1,78 @@
+.create-parking {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.create-parking__field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  font-weight: bold;
+}
+
+.field__input {
+  text-align: center;
+  width: 70px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.note {
+  font-style: italic;
+  font-size: 12px;
+  color: grey;
+  margin-bottom: 0;
+}
+
+.create-parking__footer {
+  display: flex;
+  flex-direction: column;
+  height: 50px;
+  text-align: center;
+}
+
+.confirm-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.confirm-option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px dashed rgba(grey, 0.2);
+  background-color: $white;
+
+  &:hover {
+    background-color: rgba(grey, 0.2);
+    border-style: solid;
+
+    .option--yes {
+      width: 20px;
+    }
+    .option--no {
+      font-size: 20px;
+    }
+  }
+}
+
+.footer__create-parking {
+  flex-grow: 1;
+}
+
+.option--yes {
+  width: 15px;
+}
+
+.option--no {
+  font-size: 15px;
+  font-weight: bold;
+  color: red;
+}

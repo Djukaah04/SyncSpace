@@ -1,0 +1,47 @@
+.date-slider {
+  text-align: center;
+}
+
+.date-slider__nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.date-slider__calendar {
+  padding: 5px;
+  font-size: 14px;
+  background-color: $white;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.nav__current-date {
+  margin: 10px;
+}
+
+.nav__day-change {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  background-color: transparent;
+
+  &:hover {
+    .arrow {
+      width: 35px;
+    }
+  }
+}
+
+.arrow {
+  top: 0;
+  bottom: 0;
+  border: 2px solid black;
+  border-radius: 50%;
+  width: 30px;
+  background-color: $white;
+}

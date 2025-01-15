@@ -2,15 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import ParkingSlotInfo from "../../models/ParkingSlotInfo";
 import { AppDispatch } from "..";
 import { db } from "../../config/firebase";
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  Timestamp,
-  where,
-  writeBatch,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import ReservationInfo from "../../models/ReservationInfo";
 import ParkingStatus from "../../enums/ParkingStatus";
 
@@ -25,6 +17,7 @@ interface ParkingState {
   reservations: ReservationInfo[];
   loading: boolean;
   error: string | null;
+  dateForShow: number;
 }
 
 const initialState: ParkingState = {
@@ -33,60 +26,21 @@ const initialState: ParkingState = {
   reservations: [],
   loading: false,
   error: null,
+  dateForShow: new Date().getTime(),
 };
 
 export const fetchParking = () => async (dispatch: AppDispatch) => {
-  console.log("%c fetch", "color: lightgreen; font-size: 25px");
   dispatch(setLoading(true));
   try {
     const parkingRef = collection(db, "parking");
-    const reservationsRef = collection(db, "reservations");
-
-    const currentTime = Timestamp.now();
-    const takenReservationsQuery = query(
-      reservationsRef,
-      where("startTime", "<=", currentTime),
-      where("endTime", ">=", currentTime)
-    );
 
     const parkingSnapshot = await getDocs(parkingRef);
-    const reservationsSnapshot = await getDocs(reservationsRef);
-    const takenReservationsSnapshot = await getDocs(takenReservationsQuery);
-
-    const takenIds = [
-      ...new Set(
-        takenReservationsSnapshot.docs.map((doc) => doc.data().parkingSlotId)
-      ),
-    ];
-    console.log("%c takenIds", "color: orange; font-size: 25px", takenIds);
 
     const parking: ParkingSlotInfo[] = parkingSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...(doc.data() as Omit<ParkingSlotInfo, "id">),
-      status: takenIds.includes(doc.id)
-        ? ParkingStatus.RESERVED
-        : ParkingStatus.FREE,
     }));
-    const batch = writeBatch(db);
-    parking.forEach((slot) => {
-      const slotRef = doc(parkingRef, slot.id);
-      batch.set(slotRef, slot);
-    });
-    try {
-      await batch.commit();
-    } catch (error) {
-      console.error("Error with BATCH!", error);
-    }
-    const reservations: ReservationInfo[] = reservationsSnapshot.docs.map(
-      (doc) => ({
-        ...(doc.data() as ReservationInfo),
-        id: doc.id,
-        startTime: doc.data().startTime.toDate().getTime(),
-        endTime: doc.data().endTime.toDate().getTime(),
-      })
-    );
     dispatch(setParkingSlots(parking));
-    dispatch(setReservations(reservations));
 
     dispatch(
       setParkingSize({
@@ -96,9 +50,34 @@ export const fetchParking = () => async (dispatch: AppDispatch) => {
           : 0,
       })
     );
+    console.log("%c fetch done", "color: pink; font-size: 25px");
   } catch (error: any) {
     // dispatch(setError(error.message || "Failed to fetch parking!"));
     console.error(error);
+  }
+};
+
+export const deleteParking = (docs) => async (dispatch: AppDispatch) => {
+  try {
+    const batchPromises = docs.map((document) =>
+      deleteDoc(doc(db, "parking", document.id))
+    );
+    await Promise.all(batchPromises);
+  } catch (err) {
+    throw new Error("Error deleting parking:", err);
+  }
+};
+
+export const deleteReservations = () => async (dispatch: AppDispatch) => {
+  try {
+    const reservationsRef = collection(db, "reservations");
+    const snapshot = await getDocs(reservationsRef);
+    const batchPromises = snapshot.docs.map((document) =>
+      deleteDoc(doc(reservationsRef, document.id))
+    );
+    await Promise.all(batchPromises);
+  } catch (err) {
+    throw new Error("Error deleting reservations:", err);
   }
 };
 
@@ -128,6 +107,12 @@ const parkingSlice = createSlice({
     setParkingSize: (state, action: PayloadAction<ParkingSize>) => {
       state.parkingSize = action.payload;
     },
+    clearParkingSize: (state) => {
+      state.parkingSize = {
+        rowNumber: 0,
+        columnNumber: 0,
+      };
+    },
     setReservations: (state, action: PayloadAction<ReservationInfo[]>) => {
       state.reservations = action.payload;
     },
@@ -138,6 +123,9 @@ const parkingSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    setDateForShow: (state, action: PayloadAction<number>) => {
+      state.dateForShow = action.payload;
+    },
   },
 });
 
@@ -145,8 +133,10 @@ export const {
   setParkingSlots,
   clearParkingSlots,
   setParkingSize,
+  clearParkingSize,
   setReservations,
   setLoading,
   setError,
+  setDateForShow,
 } = parkingSlice.actions;
 export default parkingSlice.reducer;

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import UserInfo from "../../models/UserInfo";
+import UserStatus from "../../enums/UserStatus";
 
 interface AuthState {
   user: UserInfo | null;
@@ -14,12 +15,21 @@ const authSlice = createSlice({
   reducers: {
     setUser: (state, action: PayloadAction<UserInfo>) => {
       state.user = action.payload;
+      state.user.status = UserStatus.ONLINE;
     },
     clearUser: (state) => {
       state.user = null;
     },
+    updateCar: (state, action: PayloadAction<string>) => {
+      if (!state.user) return;
+      state.user.carUrl = action.payload;
+    },
+    clearCar: (state) => {
+      if (!state.user) return;
+      state.user.carUrl = undefined;
+    },
   },
 });
 
-export const { setUser, clearUser } = authSlice.actions;
+export const { setUser, clearUser, updateCar, clearCar } = authSlice.actions;
 export default authSlice.reducer;

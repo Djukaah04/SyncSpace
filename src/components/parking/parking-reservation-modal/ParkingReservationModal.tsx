@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { DateRange, RangeKeyDict } from "react-date-range";
@@ -7,12 +7,10 @@ import QRCode from "qrcode";
 import { RootState } from "../../../store";
 import { useSelector } from "react-redux";
 import ParkingSlotInfo from "../../../models/ParkingSlotInfo";
-import ReservationInfo from "../../../models/ReservationInfo";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../config/firebase";
 import ReservationFirestore from "../../../store/types/ReservationFirestore";
 import { Timestamp } from "firebase/firestore";
-import ParkingStatus from "../../../enums/ParkingStatus";
 
 export interface Range {
   startDate?: Date;
@@ -22,13 +20,14 @@ export interface Range {
 
 interface ParkingSlotProps {
   parking: ParkingSlotInfo;
+  onClose: any;
 }
 
 interface ParkingReservationFormInputs {
   reservationTime: Range;
 }
 
-const ParkingReservationModal = (props: ParkingSlotProps) => {
+const ParkingReservationModal = ({ parking, onClose }: ParkingSlotProps) => {
   const { register, handleSubmit, setValue } =
     useForm<ParkingReservationFormInputs>({
       defaultValues: {
@@ -59,28 +58,45 @@ const ParkingReservationModal = (props: ParkingSlotProps) => {
     )
       return;
 
-    const newReservation: ReservationFirestore = {
-      userId: user.uid,
-      parkingSlotId: props.parking.id,
-      startTime: Timestamp.fromDate(formData.reservationTime.startDate),
-      endTime: Timestamp.fromDate(formData.reservationTime.endDate),
-    };
-    const reservationsRef = collection(db, "reservations");
-    const parkingRef = collection(db, "parking");
+    const startTime = new Date(
+      formData.reservationTime.startDate.setHours(0, 0, 0, 0)
+    );
+    const endTime = new Date(
+      formData.reservationTime.endDate.setHours(23, 59, 59, 999)
+    );
 
-    const currentTime = Timestamp.now();
-    const reservationDoc = await addDoc(reservationsRef, newReservation);
-    if (
-      newReservation.startTime <= currentTime &&
-      newReservation.endTime >= currentTime
-    ) {
-      await updateDoc(
-        doc(parkingRef, props.parking.id),
-        "status",
-        ParkingStatus.RESERVED
+    const newReservation: ReservationFirestore = {
+      userId: user.id,
+      parkingSlotId: parking.id,
+      startTime: Timestamp.fromDate(startTime),
+      endTime: Timestamp.fromDate(endTime),
+    };
+
+    const reservationsRef = collection(db, "reservations");
+    const overlapReservationsQuery = query(
+      reservationsRef,
+      where("startTime", "<=", Timestamp.fromDate(endTime)),
+      where("endTime", ">=", Timestamp.fromDate(startTime)),
+      where("parkingSlotId", "==", parking.id)
+    );
+    const snapshot = await getDocs(overlapReservationsQuery);
+
+    if (snapshot.empty) {
+      await addDoc(reservationsRef, newReservation);
+      onClose();
+    } else {
+      console.log(
+        "%c Rezervacija vec postoji",
+        "color: red; font-size: 25px",
+        snapshot.docs.forEach((res) => {
+          console.log(
+            "%c res.data()",
+            "color: orange; font-size: 25px",
+            res.data()
+          );
+        })
       );
     }
-    console.log("%c gotov update", "color: lightgreen; font-size: 25px");
   };
 
   const onRangeChange = (ranges: RangeKeyDict) => {
@@ -89,21 +105,19 @@ const ParkingReservationModal = (props: ParkingSlotProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(reserveSlot)}>
-      <label>
-        Slot {props.parking.row}.{props.parking.column}
-      </label>
+    <form className="parking-reservation" onSubmit={handleSubmit(reserveSlot)}>
+      <h2 className="parking-reservation__title">Slot {parking.number}</h2>
 
-      <div>
-        <DateRange
-          {...register("reservationTime")}
-          locale={enUS}
-          ranges={[date]}
-          onChange={onRangeChange}
-        />
-      </div>
+      <DateRange
+        {...register("reservationTime")}
+        locale={enUS}
+        ranges={[date]}
+        onChange={onRangeChange}
+      />
 
-      <button type="submit">Reserve</button>
+      <button className="parking-reservation__reserve" type="submit">
+        Reserve
+      </button>
     </form>
   );
 };

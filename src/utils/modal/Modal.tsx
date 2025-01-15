@@ -8,8 +8,10 @@ const Modal = ({ children, isOpen, onClose }) => {
     <>
       <div className="overlay" />
       <div className="modal">
-        <button onClick={onClose}>Close</button>
-        <div>Modal: {children}</div>
+        <button className="close" onClick={onClose}>
+          <img className="x-logo" src="assets/svg/x.svg" alt="close" />
+        </button>
+        {children}
       </div>
     </>,
     document.getElementById("portal") as HTMLElement
