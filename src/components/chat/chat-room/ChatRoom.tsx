@@ -60,7 +60,13 @@ const ChatRoom = () => {
             )
         )}
       </ul>
-      {friend && <Room roomId={getRoomId()} friendName={friend.displayName} />}
+      {friend && (
+        <Room
+          roomId={getRoomId()}
+          friendName={friend.displayName}
+          friendPhoto={friend.photoUrl}
+        />
+      )}
     </div>
   );
 };

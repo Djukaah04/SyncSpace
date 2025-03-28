@@ -1,3 +1,100 @@
+.profile {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.profile__nav {
+  position: relative;
+  text-align: center;
+  margin: 30px;
+}
+
+.nav__back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  justify-self: left;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 50px;
+
+  img {
+    width: 25px;
+  }
+}
+
+.nav__my-profile {
+  margin: 0;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.profile__picture-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  border: 2px solid $white;
+  border-radius: 50%;
+  width: fit-content;
+  // text-align: center;
+  margin: 0 auto;
+  margin-bottom: -55px;
+  z-index: 2;
+  background-color: white;
+  padding: 5px;
+
+  &:hover:not(:has(.picture-container__upload:hover)) {
+    .picture-container__picture {
+      border-color: $black;
+    }
+    .picture-container__upload {
+      // display: block;
+    }
+  }
+}
+
+.picture-container__picture {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 2px solid $white;
+  border-radius: 50%;
+}
+
+.picture-container__upload {
+  // display: none;
+  position: absolute;
+  bottom: 0;
+  right: 0px;
+  // left: 0;
+  background-color: $white;
+  border-radius: 50%;
+  // border: none;
+
+  &:hover {
+    background-color: lightgrey;
+  }
+}
+
+.upload__img {
+  width: 25px;
+  cursor: pointer;
+}
+
+.profile__info-container {
+  background-color: $white;
+  border-radius: 40px;
+  padding: 60px;
+}
+
+.profile__car {
+  width: 100px;
+}
+
 .car-select-list {
   display: flex;
   justify-content: space-between;

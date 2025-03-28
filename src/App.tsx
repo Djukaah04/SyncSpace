@@ -14,6 +14,7 @@ import { AppDispatch } from "./store";
 import Home from "./pages/home/Home";
 
 import "./styles/base/App.scss";
+import Profile from "./components/profile/Profile";
 function App() {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -69,6 +70,7 @@ function App() {
           <Route element={<Register />} path="/register"></Route>
           <Route element={<ProtectedRoutes />}>
             <Route element={<Home />} path="/*"></Route>
+            <Route element={<Profile />} path="/profile"></Route>
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,8 +1,14 @@
+import UserStatus from "../enums/UserStatus.ts";
+
 interface UserInfo {
-  uid: string;
+  id: string;
   email: string | null;
   displayName: string | null;
+  color: string;
   age?: number;
+  status: UserStatus;
+  carUrl?: string;
+  photoUrl?: string;
 }
 
 export default UserInfo;

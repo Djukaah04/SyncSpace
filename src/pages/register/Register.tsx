@@ -69,6 +69,12 @@ const Register = () => {
     }
   };
 
+  const getRandomColor = (): string => {
+    return `#${Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, "0")}`;
+  };
+
   const onRegister: SubmitHandler<RegisterFormInputs> = async (
     formData: RegisterFormInputs
   ) => {
@@ -90,6 +96,7 @@ const Register = () => {
         age: formData.age,
         email: formData.email,
         status: UserStatus.OFFLINE,
+        color: getRandomColor(),
       };
 
       await setDoc(doc(usersCollection, newUser.id), newUser);

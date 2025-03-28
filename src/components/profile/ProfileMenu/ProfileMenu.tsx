@@ -1,11 +1,11 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { RootState } from "../../../store";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../../config/firebase";
 import UserStatus from "../../../enums/UserStatus";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "../../../store";
+import { useSelector } from "react-redux";
 import { signOut } from "firebase/auth";
+import React from "react";
 
 interface ProfileMenuProps {
   isOpen: boolean;

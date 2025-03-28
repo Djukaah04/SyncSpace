@@ -28,8 +28,13 @@ const authSlice = createSlice({
       if (!state.user) return;
       state.user.carUrl = undefined;
     },
+    setPhotoUrl: (state, action: PayloadAction<string>) => {
+      if (!state.user) return;
+      state.user.photoUrl = action.payload;
+    },
   },
 });
 
-export const { setUser, clearUser, updateCar, clearCar } = authSlice.actions;
+export const { setUser, clearUser, updateCar, clearCar, setPhotoUrl } =
+  authSlice.actions;
 export default authSlice.reducer;
