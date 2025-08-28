@@ -1,12 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import MessageInfo from "../../models/MessageInfo";
+import UserInfo from "../../models/UserInfo";
 
 interface ChatState {
   messages: MessageInfo[];
+  selectedFriend: UserInfo | undefined;
 }
 
 const initialState: ChatState = {
   messages: [],
+  selectedFriend: undefined,
 };
 
 const chatSlice = createSlice({
@@ -16,8 +19,11 @@ const chatSlice = createSlice({
     setMessages: (state, action: PayloadAction<MessageInfo[]>) => {
       state.messages = action.payload;
     },
+    setSelectedFriend: (state, action: PayloadAction<UserInfo>) => {
+      state.selectedFriend = action.payload;
+    },
   },
 });
 
-export const { setMessages } = chatSlice.actions;
+export const { setMessages, setSelectedFriend } = chatSlice.actions;
 export default chatSlice.reducer;

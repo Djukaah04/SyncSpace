@@ -9,6 +9,7 @@ interface UserInfo {
   status: UserStatus;
   carUrl?: string;
   photoUrl?: string;
+  role?: string;
 }
 
 export default UserInfo;

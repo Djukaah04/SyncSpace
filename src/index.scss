@@ -12,6 +12,7 @@
 @import "./pages/register/Register.scss";
 
 // ----------- COMPONENTS -----------
+@import "./components/layout/Layout.scss";
 @import "./components/chat/chat-room/ChatRoom.scss";
 @import "./components/chat/chat-room/room/Room.scss";
 @import "./components/chat/chat-box/ChatBox.scss";
@@ -22,3 +23,5 @@
 @import "./utils/date-slider/DateSlider.scss";
 @import "./components/parking/create-parking-modal/CreateParkingModal.scss";
 @import "./components/parking/parking-reservation-modal/ParkingReservationModal.scss";
+@import "./components/welcome/Welcome.scss";
+@import "./components/events/Events.scss";

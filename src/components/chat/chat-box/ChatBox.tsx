@@ -57,19 +57,14 @@ const ChatBox = ({ roomId, friendName }: RoomProps) => {
       }
     };
 
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const isPM = hours >= 12;
-    const formattedHours = hours % 12 || 12; // Convert to 12-hour format
-    const formattedMinutes = minutes.toString().padStart(2, "0");
-    const period = isPM ? "pm" : "am";
+    const hours = date.getHours().toString().padStart(2, "0"); // 24-hour format directly
+    const minutes = date.getMinutes().toString().padStart(2, "0");
 
-    if (onlyTime) return `${formattedHours}:${formattedMinutes} ${period}`;
+    if (onlyTime) return `${hours}:${minutes}`; // Return only HH:MM
 
-    return `${month} ${day}${daySuffix(
-      day
-    )}, ${year}, ${formattedHours}:${formattedMinutes} ${period}`;
+    return `${month} ${day}${daySuffix(day)}, ${year}, ${hours}:${minutes}`;
   };
+
   const sendMessage = async () => {
     if (!roomId || !newMessage.trim() || !user?.displayName) return;
 
@@ -138,6 +133,14 @@ const ChatBox = ({ roomId, friendName }: RoomProps) => {
     }
   };
 
+  const isMessageContinuous = (index, message) => {
+    if (index === 0 || messages[index - 1].sender !== message.sender) {
+      return true;
+    }
+
+    return false;
+  };
+
   useEffect(() => {
     checkRoom();
     console.log("%c roomId", "color: orange; font-size: 25px", roomId);
@@ -195,9 +198,26 @@ const ChatBox = ({ roomId, friendName }: RoomProps) => {
                 : "message-row--friend"
             }`}
           >
-            <span className="message-row__time-info">
-              {getReadableTime(message.createdAt as number, true)}
-            </span>
+            {isMessageContinuous(index, message) && (
+              <div className="message-row__info">
+                <img
+                  className="info__picture"
+                  src={
+                    users.find((u) => u.displayName === message.sender)
+                      ?.photoUrl
+                  }
+                  alt="user-photo"
+                />
+
+                <p className="info__name">
+                  {
+                    users.find((u) => u.displayName === message.sender)
+                      ?.displayName
+                  }
+                </p>
+              </div>
+            )}
+
             <div
               className={`message ${
                 message.isSending ? "message--is-sending" : ""
@@ -208,6 +228,9 @@ const ChatBox = ({ roomId, friendName }: RoomProps) => {
                 )?.color,
               }}
             >
+              <p className="message__time">
+                {getReadableTime(message.createdAt as number, true)}
+              </p>
               {message.text}
             </div>
           </div>

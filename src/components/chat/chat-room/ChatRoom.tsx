@@ -7,10 +7,14 @@ import { AppDispatch, RootState } from "../../../store";
 import UserInfo from "../../../models/UserInfo";
 import UserStatus from "../../../enums/UserStatus";
 import Room from "./room/Room";
+import { setSelectedFriend } from "../../../store/features/chatSlice";
 
 const ChatRoom = () => {
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
+  const selectedFriend = useSelector(
+    (state: RootState) => state.chat.selectedFriend
+  );
 
   const users = useSelector((state: RootState) => state.users.list);
   const [friend, setFriend] = useState<UserInfo>();
@@ -18,6 +22,15 @@ const ChatRoom = () => {
   const getRoomId = () => {
     if (!friend || !user) return null;
     return [user.id, friend.id].sort().join("_");
+  };
+
+  const onChooseFriend = (friend: UserInfo) => {
+    dispatch(setSelectedFriend(friend));
+    setFriend(friend);
+  };
+
+  const isNotMe = (userToCompare) => {
+    return user?.id !== userToCompare.id;
   };
 
   useEffect(() => {
@@ -39,19 +52,22 @@ const ChatRoom = () => {
 
   return (
     <div className="chatroom">
+      <h2 className="chatroom__friends-title">Friends</h2>
       <ul className="chatroom__friends">
         {users.map(
-          (currentUser) =>
-            user?.id !== currentUser.id && (
+          (u) =>
+            isNotMe(u) && (
               <li
-                onClick={() => setFriend(currentUser)}
-                key={currentUser.id}
-                className="friends__friend"
+                onClick={() => onChooseFriend(u)}
+                key={u.id}
+                className={`friends__friend ${
+                  selectedFriend?.id === u.id ? "friends__friend--active" : ""
+                }`}
               >
-                <p className="friend__name">{currentUser.displayName} </p>
+                <p className="friend__name">{u.displayName}</p>
                 <div
                   className={`friend__status ${
-                    currentUser.status === UserStatus.ONLINE
+                    u.status === UserStatus.ONLINE
                       ? "friend__status--online"
                       : "friend__status--offline"
                   }`}
@@ -60,12 +76,16 @@ const ChatRoom = () => {
             )
         )}
       </ul>
-      {friend && (
+      {friend ? (
         <Room
           roomId={getRoomId()}
           friendName={friend.displayName}
           friendPhoto={friend.photoUrl}
         />
+      ) : (
+        <div className="chatroom__no-friend">
+          <p>Select a friend to start chatting!</p>
+        </div>
       )}
     </div>
   );
