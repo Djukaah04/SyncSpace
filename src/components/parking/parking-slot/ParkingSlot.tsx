@@ -58,7 +58,7 @@ const ParkingSlot = ({ parking }: ParkingSlotProps) => {
             className="parking-slot__car"
           />
         ) : (
-          "aj di"
+          occupyingUser?.displayName
         )}
       </div>
       <Modal

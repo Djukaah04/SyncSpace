@@ -1,3 +1,182 @@
-// .map-container {
-//   border: 1px solid $dark-blue;
-// }
+.map-container {
+  width: 100%;
+  max-width: 900px;
+  height: 500px;
+  border: 3px solid $grey-blue;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba($black, 0.25);
+  overflow: hidden;
+  margin: 1rem auto;
+}
+
+.marker {
+  background-color: $purple;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid $white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &.active {
+    transform: scale(1.8);
+    background-color: $yellow;
+  }
+
+  &.marker-Event {
+    background-color: $purple;
+  }
+  &.marker-Warning {
+    background-color: $yellow;
+  }
+  &.marker-Reminder {
+    background-color: $blue;
+  }
+}
+
+.popup-content {
+  color: $darkgreen;
+  padding: 0.5rem;
+
+  h4 {
+    margin: 0;
+    font-size: 20px;
+    color: $blue;
+  }
+
+  p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: $black;
+    font-family: $ink-free;
+  }
+
+  .btn-remove {
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: $purple;
+    border: none;
+    border-radius: 8px;
+    color: $white;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: darken($purple, 10%);
+    }
+  }
+}
+
+.popup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: $kabel-black;
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: $dark-blue;
+  }
+
+  input,
+  textarea,
+  select {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid $grey;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: $grey-blue;
+    outline: none;
+
+    &:focus {
+      border-color: $blue;
+      background: $white;
+    }
+  }
+
+  textarea {
+    resize: none;
+    min-height: 60px;
+  }
+
+  .btn-confirm {
+    align-self: flex-end;
+    padding: 0.4rem 1rem;
+    background: $light-green;
+    color: $darkgreen;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: darken($light-green, 8%);
+    }
+  }
+}
+
+.map-container {
+  display: flex;
+  justify-content: center;
+}
+
+.events-list {
+  margin: 1.5rem auto;
+  max-width: 600px;
+  padding: 1rem;
+  background: $grey-blue;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba($black, 0.15);
+
+  h3 {
+    margin: 0 0 1rem;
+    font-family: $kabel-black;
+    color: $dark-blue;
+  }
+
+  .empty {
+    font-style: italic;
+    color: $darkgreen;
+  }
+
+  .event-card {
+    background: $white;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 6px rgba($black, 0.1);
+    border-left: 6px solid transparent;
+
+    h4 {
+      margin: 0 0 0.25rem;
+      font-size: 1rem;
+      color: $dark-blue;
+    }
+
+    p {
+      margin: 0 0 0.25rem;
+      font-size: 0.9rem;
+      color: $black;
+    }
+
+    small {
+      font-size: 0.75rem;
+      color: $darkgreen;
+      //   font-weight: bold;
+    }
+
+    &.marker-Event {
+      border-left-color: $purple;
+    }
+    &.marker-Warning {
+      border-left-color: $yellow;
+    }
+    &.marker-Reminder {
+      border-left-color: $blue;
+    }
+  }
+}

@@ -74,7 +74,7 @@ const Profile = () => {
         <span className="nav__back">
           <img onClick={back} src="assets/svg/back.svg" alt="back" />
         </span>
-        <p className="nav__my-profile">My Profile(DUALITY)</p>
+        <p className="nav__my-profile">My Profile</p>
       </nav>
 
       <span className="profile__picture-container">
@@ -100,12 +100,28 @@ const Profile = () => {
       </span>
 
       <div className="profile__info-container">
-        <h1>Profile</h1>
-        {user?.displayName && <h3>Display name: {user.displayName}</h3>}
-        {user?.email && <h3>Email: {user.email}</h3>}
-        {user?.id && <h3>Id: {user.id}</h3>}
+        <div className="profile__info">
+          {user?.displayName && (
+            <div className="info-item">
+              <span className="info-item__label">Display name:</span>
+              <span className="info-item__value">{user.displayName}</span>
+            </div>
+          )}
+          {user?.email && (
+            <div className="info-item">
+              <span className="info-item__label">Email:</span>
+              <span className="info-item__value">{user.email}</span>
+            </div>
+          )}
+          {user?.id && (
+            <div className="info-item">
+              <span className="info-item__label">Id:</span>
+              <span className="info-item__value">{user.id}</span>
+            </div>
+          )}
+        </div>
         {user?.carUrl ? (
-          <div>
+          <div className="profile__car-container">
             <p>Selected car:</p>
             <img
               src={user.carUrl}
@@ -114,13 +130,22 @@ const Profile = () => {
               draggable="false"
             />
 
-            <button onClick={removeCar}>delete car</button>
+            <button className="btn-danger" onClick={removeCar}>
+              delete car
+            </button>
           </div>
         ) : (
-          <>
-            <p>Please select a car:</p>
+          <div className="profile__car-container">
+            <p className="car-container__select-a-car">Please select a car:</p>
             <div id="car-select">
-              <button onClick={toggleSelect}>Choose a car</button>
+              <button
+                className={`btn-primary ${
+                  carSelectIsOpen ? "btn-primary--open" : ""
+                }`}
+                onClick={toggleSelect}
+              >
+                {carSelectIsOpen ? "Close car selection" : "Open car selection"}
+              </button>
               {carSelectIsOpen && cars && (
                 <ul className="car-select-list">
                   {cars.map((currentCar) => (
@@ -140,11 +165,13 @@ const Profile = () => {
                       />
                     </span>
                   ))}
-                  <button onClick={saveCar}>Save</button>
+                  <button className="btn-confirm" onClick={saveCar}>
+                    Save
+                  </button>
                 </ul>
               )}
             </div>
-          </>
+          </div>
         )}
       </div>
     </main>

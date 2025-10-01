@@ -109,12 +109,6 @@ const Events = () => {
             latitude: location.lat,
             zoom: location.zoom,
           }}
-          style={{
-            width: 600,
-            height: 400,
-            border: "3px solid rgba(31, 57, 89, 1)",
-            borderRadius: "15px",
-          }}
           mapStyle="https://api.maptiler.com/maps/streets/style.json?key=2oADDqd5xOSYXzILFpwA"
           onLoad={(e) => (mapRef.current = e.target)}
           onClick={handleMapClick}
@@ -123,12 +117,9 @@ const Events = () => {
             <div key={index} onMouseEnter={() => setHoveredMarker(marker.id)}>
               <Marker longitude={marker.lon} latitude={marker.lat}>
                 <div
-                  style={{
-                    background: "red",
-                    width: "10px",
-                    height: "10px",
-                    borderRadius: "50%",
-                  }}
+                  className={`marker marker-${marker.type} ${
+                    hoveredMarker === marker.id ? "active" : ""
+                  }`}
                   title={marker.comment}
                 ></div>
                 {hoveredMarker === marker.id && (
@@ -138,9 +129,16 @@ const Events = () => {
                     closeButton={false}
                     offset={10}
                   >
-                    <div onMouseLeave={() => setHoveredMarker(null)}>
+                    <div
+                      className="popup-content"
+                      onMouseLeave={() => setHoveredMarker(null)}
+                    >
+                      <h4>{marker.title}</h4>
                       <p>{marker.comment}</p>
-                      <button onClick={() => removeMarker(marker.id)}>
+                      <button
+                        className="btn-remove"
+                        onClick={() => removeMarker(marker.id)}
+                      >
                         Remove
                       </button>
                     </div>
@@ -156,35 +154,44 @@ const Events = () => {
               closeOnClick={false}
               onClose={() => setPopup(null)}
             >
-              <h2>Mark event</h2>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter title"
-              />
-              <input
-                type="text"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Enter comment"
-              />
-              <div>
+              <div className="popup-form">
+                <h3>📍 Mark Event</h3>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter title"
+                />
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Enter comment"
+                />
+
                 <select name="event-type" id="event-type">
                   <option value={MarkerType.EVENT}>Event</option>
                   <option value={MarkerType.WARNING}>Warning</option>
                   <option value={MarkerType.REMINDER}>Reminder</option>
                 </select>
+
+                <button className="btn-confirm" onClick={addMarker}>
+                  Confirm
+                </button>
               </div>
-              <button onClick={addMarker}>Confirm</button>
             </Popup>
           )}
         </Map>
       </div>
-      <div>
-        Events:
+
+      <div className="events-list">
+        <h3>📌 Events</h3>
+        {markers.length === 0 && <p className="empty">No events yet.</p>}
         {markers.map((marker) => (
-          <div key={marker.id}>{marker.comment}</div>
+          <div className={`event-card marker-${marker.type}`} key={marker.id}>
+            <h4>{marker.title || "Untitled"}</h4>
+            <p>{marker.comment}</p>
+            <small>Type: {marker.type}</small>
+          </div>
         ))}
       </div>
     </>

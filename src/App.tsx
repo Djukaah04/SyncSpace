@@ -54,7 +54,16 @@ function App() {
   }, [dispatch]);
 
   if (!isAuthChecked) {
-    return <div>Loading...</div>;
+    return (
+      <div className="loading">
+        <span>loading...</span>
+        <img
+          src="assets/svg/gear-spinner.svg"
+          className="loading__gears"
+          alt="gear-spinner"
+        />
+      </div>
+    );
   }
 
   return (

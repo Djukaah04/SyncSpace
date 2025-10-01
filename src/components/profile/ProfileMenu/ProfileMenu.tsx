@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { RootState } from "../../../store";
 import { useSelector } from "react-redux";
 import { signOut } from "firebase/auth";
-import React from "react";
 
 interface ProfileMenuProps {
   isOpen: boolean;

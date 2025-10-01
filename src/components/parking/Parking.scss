@@ -1,11 +1,14 @@
 .parking {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  // align-items: center;
+  justify-content: center;
+  align-items: center;
+  // background-color: $dark-blue;
   margin-top: 20px;
+  padding: 20px 0;
+  border-radius: 10px;
   flex-wrap: wrap;
-  gap: 10px;
+  row-gap: 30px;
 }
 
 .parking-row {
@@ -24,4 +27,7 @@
   font-size: medium;
   width: fit-content;
   align-self: center;
+  border-radius: 10px;
+  // color: white;
+  // background-color: rgb(255, 0, 0);
 }
