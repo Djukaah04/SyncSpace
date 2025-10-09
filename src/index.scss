@@ -2,6 +2,7 @@
 @import "./styles/helpers/_variables.scss";
 @import "./styles/base/_global.scss";
 @import "./styles/helpers/_form.scss";
+@import "./styles/helpers/_util.scss";
 @import "./utils/modal/Modal.scss";
 @import "react-date-range/dist/styles.css";
 @import "react-date-range/dist/theme/default.css";
@@ -25,3 +26,4 @@
 @import "./components/parking/parking-reservation-modal/ParkingReservationModal.scss";
 @import "./components/welcome/Welcome.scss";
 @import "./components/events/Events.scss";
+@import "./components/office/Office.scss";

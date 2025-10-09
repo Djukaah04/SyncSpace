@@ -58,3 +58,14 @@ input {
   font-size: 13px;
   color: red;
 }
+
+button {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  background: $blue;
+  color: $white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
