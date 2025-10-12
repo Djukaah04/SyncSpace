@@ -101,39 +101,39 @@ const ChatBox = ({ roomId, friendName }: RoomProps) => {
       console.error("Greska sa transakcijom", err);
     }
   };
+
   const onEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       sendMessage();
     }
   };
+
   const checkRoom = async () => {
     const roomRef = doc(db, `chat/${roomId}`);
     const snapshot = await getDoc(roomRef);
-    if (snapshot.exists()) {
-      console.log("%c postoji soba!", "color: lightgreen; font-size: 25px");
+    if (snapshot.exists()) return;
+
+    console.log(
+      "%c ne postoji soba, kreiram!",
+      "color: orange; font-size: 25px"
+    );
+    if (friendName) {
+      await setDoc(roomRef, {
+        users: [user?.displayName, friendName],
+        lastMessage: null,
+        createdAt: serverTimestamp(),
+      });
     } else {
-      console.log(
-        "%c ne postoji soba, kreiram!",
-        "color: orange; font-size: 25px"
-      );
-      if (friendName) {
-        await setDoc(roomRef, {
-          users: [user?.displayName, friendName],
-          lastMessage: null,
-          createdAt: serverTimestamp(),
-        });
-      } else {
-        await setDoc(roomRef, {
-          // users: [...users.map((currentUser) => currentUser.displayName)],
-          lastMessage: null,
-          createdAt: serverTimestamp(),
-        });
-      }
+      await setDoc(roomRef, {
+        // users: [...users.map((currentUser) => currentUser.displayName)],
+        lastMessage: null,
+        createdAt: serverTimestamp(),
+      });
     }
   };
 
-  const isMessageContinuous = (index, message) => {
+  const isMessageContinuous = (index: number, message: MessageInfo) => {
     if (index === 0 || messages[index - 1].sender !== message.sender) {
       return true;
     }
@@ -150,11 +150,6 @@ const ChatBox = ({ roomId, friendName }: RoomProps) => {
     const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
       if (snapshot.metadata.hasPendingWrites) return;
 
-      console.log(
-        "%c snapshot",
-        "color: orange; font-size: 25px",
-        snapshot.docs
-      );
       const messageList: MessageInfo[] = snapshot.docs.map((doc) => {
         return {
           ...(doc.data() as MessageInfo),

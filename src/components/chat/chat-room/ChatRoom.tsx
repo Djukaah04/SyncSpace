@@ -29,7 +29,7 @@ const ChatRoom = () => {
     setFriend(friend);
   };
 
-  const isNotMe = (userToCompare) => {
+  const isNotMe = (userToCompare: UserInfo) => {
     return user?.id !== userToCompare.id;
   };
 
