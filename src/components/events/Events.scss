@@ -1,8 +1,101 @@
+.events-list {
+  margin: 1.5rem auto;
+  max-width: 900px;
+  padding: 1rem;
+  background: $grey-blue;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba($black, 0.15);
+}
+
+.events-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.event-card {
+  display: flex;
+  background: $white;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 6px rgba($black, 0.1);
+  border-left: 10px solid transparent;
+}
+
+.events-list__title,
+.create-event__title {
+  margin: 0 0 1rem;
+  font-family: $kabel-black;
+  color: $dark-blue;
+}
+
+.event-card h4 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  color: $dark-blue;
+}
+
+.event-card p {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+  color: $black;
+}
+
+.event-card small {
+  font-size: 0.75rem;
+  color: $darkgreen;
+}
+
+.event-card__info {
+  flex-basis: 60%;
+}
+
+.event-card__invitees {
+  flex-grow: 1;
+}
+
+.event-card__invitee {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.events-list__create-event {
+  height: 30px;
+  width: 30px;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
 .events-options {
   display: flex;
   max-width: 900px;
   margin: 1.5rem auto;
   gap: 20px;
+}
+
+.event--event {
+  border-left-color: $purple;
+}
+.event--meeting {
+  border-left-color: pink;
+}
+.event--announcement {
+  border-left-color: rgb(255, 157, 0);
+}
+.event--maintenance {
+  border-left-color: rgb(151, 101, 1);
+}
+.event--warning {
+  border-left-color: rgb(219, 74, 74);
+}
+.event--reminder {
+  border-left-color: rgb(96, 96, 140);
 }
 
 .create-event {
@@ -124,24 +217,18 @@
   cursor: pointer;
   transition: transform 0.2s ease;
   box-sizing: border-box;
+
   &.active {
     transform: scale(1.8);
     background-color: $yellow;
   }
-  &.marker-Event {
-    background-color: $purple;
-  }
-  &.marker-Warning {
-    background-color: $yellow;
-  }
-  &.marker-Reminder {
-    background-color: $blue;
-  }
+
   &.marker-temp {
     background-color: $light-green;
     width: 18px;
     height: 18px;
   }
+
   &.marker-pending {
     background-color: $blue;
     width: 18px;
@@ -149,15 +236,28 @@
   }
 }
 
+.marker--event {
+  background-color: $purple;
+}
+.marker--meeting {
+  background-color: pink;
+}
+.marker--announcement {
+  background-color: rgb(255, 157, 0);
+}
+.marker--maintenance {
+  background-color: rgb(151, 101, 1);
+}
+.marker--warning {
+  background-color: rgb(219, 74, 74);
+}
+.marker--reminder {
+  background-color: rgb(96, 96, 140);
+}
+
 .popup-content {
   color: $darkgreen;
   padding: 0.5rem;
-}
-
-.popup-actions-compact {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
 }
 
 .btn-remove {
@@ -167,6 +267,8 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  margin-top: 10px;
+
   &:hover {
     background: darken($purple, 8%);
   }
@@ -176,62 +278,4 @@
   display: flex;
   gap: 10px;
   justify-content: center;
-}
-
-.events-list {
-  margin: 1.5rem auto;
-  max-width: 900px;
-  padding: 1rem;
-  background: $grey-blue;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba($black, 0.15);
-}
-
-.events-list__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.events-list__create-event {
-  height: 30px;
-  width: 30px;
-  transition: transform 0.2s ease;
-  cursor: pointer;
-
-  &:hover {
-    transform: scale(1.2);
-  }
-}
-
-.events-list h3 {
-  margin: 0 0 1rem;
-  font-family: $kabel-black;
-  color: $dark-blue;
-}
-
-.event-card {
-  background: $white;
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.75rem;
-  box-shadow: 0 2px 6px rgba($black, 0.1);
-  border-left: 6px solid transparent;
-}
-
-.event-card h4 {
-  margin: 0 0 0.25rem;
-  font-size: 1rem;
-  color: $dark-blue;
-}
-
-.event-card p {
-  margin: 0 0 0.25rem;
-  font-size: 0.9rem;
-  color: $black;
-}
-
-.event-card small {
-  font-size: 0.75rem;
-  color: $darkgreen;
 }

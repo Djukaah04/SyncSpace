@@ -7,6 +7,8 @@ import {
   collection,
   deleteDoc,
   doc,
+  onSnapshot,
+  query,
 } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
@@ -14,6 +16,7 @@ import EventInfo from "../../models/EventInfo";
 import MarkerType from "../../enums/MarkerType";
 import { db } from "../../config/firebase";
 import Modal from "../../utils/modal/Modal";
+import UserRole from "../../enums/UserRole";
 
 const Events = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -25,7 +28,7 @@ const Events = () => {
   });
   const [createEventVisible, setCreateEventVisible] = useState(false);
   const [events, setEvents] = useState<EventInfo[]>([]);
-  const [hoveredEvent, setHoveredEvent] = useState<number | null>(null);
+  const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
 
   const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
@@ -88,6 +91,22 @@ const Events = () => {
       }
     };
     fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    const eventsCol = collection(db, "events");
+    const q = query(eventsCol);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const eventsData: EventInfo[] = snapshot.docs.map((doc) => {
+        const data = doc.data() as Omit<EventInfo, "id" | "docId">;
+        return {
+          ...data,
+          id: doc.id,
+        } as EventInfo;
+      });
+      setEvents(eventsData);
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleMapClick = (e: MapMouseEvent) => {
@@ -172,7 +191,7 @@ const Events = () => {
     }
   };
 
-  const removeMarker = async (markerId: number, docId?: string) => {
+  const removeMarker = async (markerId: string, docId?: string) => {
     try {
       if (docId) await deleteDoc(doc(db, "events", docId));
       setEvents((prev) => prev.filter((m) => m.id !== markerId));
@@ -195,7 +214,7 @@ const Events = () => {
     <>
       <div className="events-list">
         <div className="events-list__header">
-          <h3>📌 Events</h3>
+          <h3 className="events-list__title">📌 Events</h3>
           <img
             onClick={toggleCreateEvent}
             className="events-list__create-event"
@@ -205,22 +224,49 @@ const Events = () => {
         </div>
         {events.length === 0 && <p className="empty">No events yet.</p>}
         {events.map((event) => (
-          <div className={`event-card marker-${event.type}`} key={event.id}>
-            <h4>{event.title || "Untitled"}</h4>
-            <p>{event.comment}</p>
-            <small>
-              Type: {event.type} •{" "}
-              {event.eventDate
-                ? new Date(event.eventDate).toLocaleDateString()
-                : "No date"}
-            </small>
-            <div className="popup-actions-compact">
-              <button
-                className="btn-remove"
-                onClick={() => removeMarker(event.id, event.docId)}
-              >
-                Delete
-              </button>
+          <div
+            className={`event-card event--${event.type.toLowerCase()}`}
+            key={event.id}
+          >
+            <div className="event-card__info">
+              <h4>{event.title || "Untitled"}</h4>
+              <p>{event.comment}</p>
+              <small>
+                Type: {event.type} •{" "}
+                {event.eventDate
+                  ? new Date(event.eventDate).toLocaleDateString()
+                  : "No date"}
+              </small>
+              {user && user.role === UserRole.ADMIN && (
+                <button
+                  className="btn-remove"
+                  onClick={() => removeMarker(event.id, event.id)}
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+            <div className="event-card__invitees">
+              {event.invited &&
+                event.invited.length > 0 &&
+                event.invited.map((userId) => {
+                  const invitedUser = allUsers.find((u) => u.id === userId);
+                  if (!invitedUser) return null;
+                  return (
+                    <div key={userId} className="event-card__invitee">
+                      <img
+                        src={
+                          invitedUser.photoUrl || "assets/svg/businessman.svg"
+                        }
+                        alt="avatar"
+                        className="invite-avatar"
+                      />
+                      <span className="invite-name">
+                        {invitedUser.displayName || invitedUser.email}
+                      </span>
+                    </div>
+                  );
+                })}
             </div>
           </div>
         ))}
@@ -229,7 +275,7 @@ const Events = () => {
       <div className="events-options">
         {createEventVisible && (
           <div className="create-event">
-            <h3>📍 Create Event</h3>
+            <h3 className="create-event__title">📍 Create Event</h3>
             <label>
               Title
               <input
@@ -383,7 +429,7 @@ const Events = () => {
                 >
                   <Marker longitude={event.lon} latitude={event.lat}>
                     <div
-                      className={`marker marker-${event.type} ${
+                      className={`marker marker--${event.type.toLowerCase()} ${
                         hoveredEvent === event.id ? "active" : ""
                       }`}
                       title={event.comment}

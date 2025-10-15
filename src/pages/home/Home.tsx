@@ -3,11 +3,14 @@ import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import ChatRoom from "../../components/chat/chat-room/ChatRoom";
 import TeamWall from "../../components/chat/team-wall/TeamWall";
 import Parking from "../../components/parking/Parking";
-import Office from "../../components/Office";
 import React, { useState } from "react";
 import Events from "../../components/events/Events";
 import Welcome from "../../components/welcome/Welcome";
 import Layout from "../../components/layout/Layout";
+import Office from "../../components/office/Office";
+import UserRole from "../../enums/UserRole";
+import { RootState } from "../../store";
+import { useSelector } from "react-redux";
 
 enum NavOption {
   PARKING = "PARKING",
@@ -18,6 +21,7 @@ enum NavOption {
 }
 const Home = () => {
   const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.user);
 
   const location = useLocation();
   const [profileMenuOpen, setProfileMenuOpen] = useState<boolean>(false);
@@ -48,6 +52,9 @@ const Home = () => {
               src="assets/svg/businessman.svg"
               alt="profile-menu"
             />
+            {user && user.role === UserRole.ADMIN && (
+              <span className="star">★</span>
+            )}
             <ProfileMenu isOpen={profileMenuOpen} />
           </span>
         </div>
