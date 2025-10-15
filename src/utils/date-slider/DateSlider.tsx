@@ -10,6 +10,16 @@ const DateSlider = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
+  useEffect(() => {
+    const handler = (e: any) => {
+      if (e.detail && e.detail.date) {
+        setSelectedDate(new Date(e.detail.date));
+      }
+    };
+    window.addEventListener("dateSlider-set-date", handler);
+    return () => window.removeEventListener("dateSlider-set-date", handler);
+  }, []);
+
   const goToPreviousDay = () => setSelectedDate((prev) => subDays(prev, 1));
   const goToNextDay = () => setSelectedDate((prev) => addDays(prev, 1));
 

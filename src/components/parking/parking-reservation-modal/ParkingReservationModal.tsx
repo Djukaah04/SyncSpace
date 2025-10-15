@@ -9,6 +9,8 @@ import { useSelector } from "react-redux";
 import ParkingSlotInfo from "../../../models/ParkingSlotInfo";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../config/firebase";
+import { useDispatch } from "react-redux";
+import { setDateForShow } from "../../../store/features/parkingSlice";
 import ReservationFirestore from "../../../store/types/ReservationFirestore";
 import { Timestamp } from "firebase/firestore";
 
@@ -44,13 +46,13 @@ const ParkingReservationModal = ({ parking, onClose }: ParkingSlotProps) => {
     key: "selection",
   });
   const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
+  const [error, setError] = useState<string | null>(null);
 
   const reserveSlot: SubmitHandler<ParkingReservationFormInputs> = async (
     formData: ParkingReservationFormInputs
   ) => {
-    // const code = await QRCode.toDataURL(
-    //   `Parking rezervisan od ${date.startDate} do ${date.endDate}`
-    // );
+    setError(null);
     if (
       !user ||
       !formData.reservationTime.startDate ||
@@ -65,14 +67,34 @@ const ParkingReservationModal = ({ parking, onClose }: ParkingSlotProps) => {
       formData.reservationTime.endDate.setHours(23, 59, 59, 999)
     );
 
-    const newReservation: ReservationFirestore = {
-      userId: user.id,
-      parkingSlotId: parking.id,
-      startTime: Timestamp.fromDate(startTime),
-      endTime: Timestamp.fromDate(endTime),
-    };
-
+    // Provera da li user već ima rezervaciju za bilo koji dan u izabranom periodu
     const reservationsRef = collection(db, "reservations");
+    const userReservationsQuery = query(
+      reservationsRef,
+      where("userId", "==", user.id)
+    );
+    const userReservationsSnap = await getDocs(userReservationsQuery);
+    let conflict = false;
+    userReservationsSnap.forEach((docSnap) => {
+      const data = docSnap.data() as ReservationFirestore;
+      const s = data.startTime.toDate();
+      const e = data.endTime.toDate();
+      for (
+        let d = new Date(startTime);
+        d <= endTime;
+        d.setDate(d.getDate() + 1)
+      ) {
+        if (d >= s && d <= e) {
+          conflict = true;
+        }
+      }
+    });
+    if (conflict) {
+      setError("Već imate rezervaciju za neki od izabranih dana!");
+      return;
+    }
+
+    // Provera da li slot nije već zauzet (kao i do sada)
     const overlapReservationsQuery = query(
       reservationsRef,
       where("startTime", "<=", Timestamp.fromDate(endTime)),
@@ -82,26 +104,30 @@ const ParkingReservationModal = ({ parking, onClose }: ParkingSlotProps) => {
     const snapshot = await getDocs(overlapReservationsQuery);
 
     if (snapshot.empty) {
-      await addDoc(reservationsRef, newReservation);
+      await addDoc(reservationsRef, {
+        userId: user.id,
+        parkingSlotId: parking.id,
+        startTime: Timestamp.fromDate(startTime),
+        endTime: Timestamp.fromDate(endTime),
+      });
       onClose();
     } else {
-      console.log(
-        "%c Rezervacija vec postoji",
-        "color: red; font-size: 25px",
-        snapshot.docs.forEach((res) => {
-          console.log(
-            "%c res.data()",
-            "color: orange; font-size: 25px",
-            res.data()
-          );
-        })
-      );
+      setError("Ovaj slot je već rezervisan u tom periodu.");
     }
   };
 
   const onRangeChange = (ranges: RangeKeyDict) => {
     setDate(ranges.selection);
     setValue("reservationTime", ranges.selection);
+    // Kada korisnik klikne na datum, pomeri DateSlider na taj dan
+    if (ranges.selection && ranges.selection.startDate) {
+      dispatch(setDateForShow(ranges.selection.startDate.getTime()));
+      window.dispatchEvent(
+        new CustomEvent("dateSlider-set-date", {
+          detail: { date: ranges.selection.startDate },
+        })
+      );
+    }
   };
 
   return (
@@ -114,6 +140,10 @@ const ParkingReservationModal = ({ parking, onClose }: ParkingSlotProps) => {
         ranges={[date]}
         onChange={onRangeChange}
       />
+
+      {error && (
+        <div style={{ color: "crimson", margin: "8px 0" }}>{error}</div>
+      )}
 
       <button className="parking-reservation__reserve" type="submit">
         Reserve

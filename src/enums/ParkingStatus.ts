@@ -1,7 +1,7 @@
 enum ParkingStatus {
   FREE = "FREE",
   RESERVED = "RESERVED",
-  TAKEN = "TAKEN",
+  DISABLED = "DISABLED",
 }
 
 export default ParkingStatus;

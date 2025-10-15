@@ -2,6 +2,7 @@
   display: flex;
   justify-content: center;
   flex: 1 0 auto;
+  position: relative;
 }
 
 .parking-slot {
@@ -9,7 +10,6 @@
   padding: 5px;
   height: 100px;
   min-width: 65px;
-  // background-color: #6a4431;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,12 +19,99 @@
     cursor: pointer;
     border-color: rgba(0, 0, 0, 0.5);
   }
+
+  &.slot-free {
+    background-color: $white;
+  }
+
+  &.slot-taken {
+    background-color: #f5f5f5;
+    border-style: solid;
+  }
+
+  &.slot-disabled {
+    background-color: #ddd;
+    border: 2px solid #999;
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 .parking-slot__car {
   height: 100%;
-  // width: 40px;
-  // width: 100%;
+}
+
+.parking-slot__admin-icon {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  height: 20px;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+  }
+}
+
+.admin-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  text-align: center;
+
+  h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  .btn-enable {
+    background-color: #4caf50;
+    color: #fff;
+
+    &:hover {
+      background-color: #45a049;
+    }
+
+    &:disabled {
+      background-color: #0d16b6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .btn-disable {
+    background-color: #f44336;
+    color: #fff;
+
+    &:hover {
+      background-color: #d7382f;
+    }
+  }
+
+  .btn-free {
+    background-color: #2196f3;
+    color: #fff;
+
+    &:hover {
+      background-color: #1976d2;
+    }
+  }
 }
 
 @media (min-width: 992px) {

@@ -17,7 +17,11 @@ interface CreateParkingFormInputs {
   columnNumber: number;
 }
 
-const CreateParkingModal = ({ onClose }) => {
+interface CreateParkingModalProps {
+  onClose: () => void;
+}
+
+const CreateParkingModal = ({ onClose }: CreateParkingModalProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { register, handleSubmit } = useForm<CreateParkingFormInputs>();
   const MAX_INPUT_LENGTH = 15;

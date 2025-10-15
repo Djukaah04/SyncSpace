@@ -24,11 +24,11 @@ import ReservationInfo from "../../models/ReservationInfo";
 import DateSlider from "../../utils/date-slider/DateSlider";
 import ReservationFirestore from "../../store/types/ReservationFirestore";
 import ParkingStatus from "../../enums/ParkingStatus";
+import DeleteReservationsModal from "./delete-reservations-modal/DeleteReservationsModal";
 
 const Parking = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
-  // const [takenSlots, setTakenSlots]=useState<>
 
   const loading: boolean = useSelector(
     (state: RootState) => state.parking.loading
@@ -46,14 +46,25 @@ const Parking = () => {
     (state: RootState) => state.parking.dateForShow
   );
 
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [createParkingModalIsOpen, setCreateParkingModalIsOpen] =
+    useState(false);
+  const [deleteReservationsModalIsOpen, setDeleteReservationsModalIsOpen] =
+    useState(false);
 
-  const openModal = () => {
-    setModalIsOpen(true);
+  const openCreateParkingModal = () => {
+    setCreateParkingModalIsOpen(true);
   };
 
-  const closeModal = () => {
-    setModalIsOpen(false);
+  const openDeleteReservationsModal = () => {
+    setDeleteReservationsModalIsOpen(true);
+  };
+
+  const closeCreateParkingModal = () => {
+    setCreateParkingModalIsOpen(false);
+  };
+
+  const closeDeleteReservationsModal = () => {
+    setDeleteReservationsModalIsOpen(false);
   };
 
   const arrayToMatrix = (
@@ -120,22 +131,32 @@ const Parking = () => {
           ])
         ).values()
       );
-      const parking: ParkingSlotInfo[] = parkingSlots.map(
-        (slot: ParkingSlotInfo) =>
-          takenSlots.some((takenSlot) => takenSlot.slotId === slot.id)
-            ? {
-                ...slot,
-                status: ParkingStatus.RESERVED,
-                userId: takenSlots.find(
-                  (takenSlot) => takenSlot.slotId === slot.id
-                )?.userId,
-              }
-            : { ...slot, status: ParkingStatus.FREE, userId: undefined }
+      const state = (window as any).store?.getState?.();
+      const currentParkingSlots: ParkingSlotInfo[] =
+        state?.parking?.parkingSlots || parkingSlots;
+      const parking: ParkingSlotInfo[] = currentParkingSlots.map(
+        (slot: ParkingSlotInfo) => {
+          if (slot.status === ParkingStatus.DISABLED) {
+            return slot;
+          }
+
+          if (takenSlots.some((takenSlot) => takenSlot.slotId === slot.id)) {
+            return {
+              ...slot,
+              status: ParkingStatus.RESERVED,
+              userId: takenSlots.find(
+                (takenSlot) => takenSlot.slotId === slot.id
+              )?.userId,
+            };
+          }
+
+          return { ...slot, status: ParkingStatus.FREE, userId: undefined };
+        }
       );
 
       if (
-        parkingSlots.length !== 0 &&
-        hasParkingChanged(parkingSlots, parking)
+        currentParkingSlots.length !== 0 &&
+        hasParkingChanged(currentParkingSlots, parking)
       ) {
         dispatch(setParkingSlots(parking));
       }
@@ -144,7 +165,29 @@ const Parking = () => {
     return () => {
       unsubscribe();
     };
-  }, [dispatch, parkingSlots, dateForShow]);
+  }, [dispatch, dateForShow]);
+
+  useEffect(() => {
+    const parkingRef = collection(db, "parking");
+    const unsubscribe = onSnapshot(parkingRef, (snapshot) => {
+      const updatedSlots: ParkingSlotInfo[] = snapshot.docs.map((doc) => ({
+        ...(doc.data() as ParkingSlotInfo),
+        id: doc.id,
+      }));
+
+      const state = (window as any).store?.getState?.();
+      const currentParkingSlots: ParkingSlotInfo[] =
+        state?.parking?.parkingSlots || parkingSlots;
+      if (
+        currentParkingSlots.length !== 0 &&
+        hasParkingChanged(currentParkingSlots, updatedSlots)
+      ) {
+        dispatch(setParkingSlots(updatedSlots));
+      }
+    });
+
+    return () => unsubscribe();
+  }, [dispatch]);
 
   return (
     <>
@@ -156,8 +199,17 @@ const Parking = () => {
         </div>
       )}
 
-      <Modal isOpen={modalIsOpen} onClose={closeModal}>
-        <CreateParkingModal onClose={closeModal} />
+      <Modal
+        isOpen={createParkingModalIsOpen}
+        onClose={closeCreateParkingModal}
+      >
+        <CreateParkingModal onClose={closeCreateParkingModal} />
+      </Modal>
+      <Modal
+        isOpen={deleteReservationsModalIsOpen}
+        onClose={closeDeleteReservationsModal}
+      >
+        <DeleteReservationsModal onClose={closeDeleteReservationsModal} />
       </Modal>
       <div className="parking">
         {parkingSlots &&
@@ -173,9 +225,20 @@ const Parking = () => {
               </div>
             )
           )}
-        <button className="parking__create-parking-button" onClick={openModal}>
-          create new parking
-        </button>
+        <div className="parking__admin-buttons">
+          <button
+            className="parking__create-parking-button"
+            onClick={openCreateParkingModal}
+          >
+            create new parking
+          </button>
+          <button
+            className="parking__delete-reservations-button"
+            onClick={openDeleteReservationsModal}
+          >
+            delete all reservations
+          </button>
+        </div>
       </div>
     </>
   );
