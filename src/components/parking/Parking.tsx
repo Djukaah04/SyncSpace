@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import {
   collection,
-  getDocs,
   onSnapshot,
   query,
   Timestamp,

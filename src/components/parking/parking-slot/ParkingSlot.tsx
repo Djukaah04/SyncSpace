@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ParkingReservationModal from "../parking-reservation-modal/ParkingReservationModal";
+import ReservationDetailsModal from "../reservation-details-modal/ReservationDetailsModal";
 import Modal from "../../../utils/modal/Modal";
 import ParkingSlotInfo from "../../../models/ParkingSlotInfo";
 import ParkingStatus from "../../../enums/ParkingStatus";
@@ -24,6 +25,10 @@ interface ParkingSlotProps {
 
 const ParkingSlot = ({ parking }: ParkingSlotProps) => {
   const [reservationModalIsOpen, setReservationModalIsOpen] = useState(false);
+  const [detailsModalIsOpen, setDetailsModalIsOpen] = useState(false);
+  const [reservationEnd, setReservationEnd] = useState<Date | undefined>(
+    undefined
+  );
   const [adminModalIsOpen, setAdminModalIsOpen] = useState(false);
   const [adminLoading, setAdminLoading] = useState(false);
   const user = useSelector((state: RootState) => state.auth.user);
@@ -31,8 +36,28 @@ const ParkingSlot = ({ parking }: ParkingSlotProps) => {
     undefined
   );
 
-  const openReservationModal = () => {
-    setReservationModalIsOpen(true);
+  const handleSlotClick = async () => {
+    if (parking.status === ParkingStatus.FREE) {
+      setReservationModalIsOpen(true);
+    } else if (parking.status === ParkingStatus.RESERVED && parking.userId) {
+      const reservationsRef = collection(db, "reservations");
+      const q = query(
+        reservationsRef,
+        where("parkingSlotId", "==", parking.id),
+        where("userId", "==", parking.userId)
+      );
+      const snapshot = await getDocs(q);
+      let maxEnd: Date | undefined = undefined;
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (data.endTime && data.endTime.toDate) {
+          const end = data.endTime.toDate();
+          if (!maxEnd || end > maxEnd) maxEnd = end;
+        }
+      });
+      setReservationEnd(maxEnd);
+      setDetailsModalIsOpen(true);
+    }
   };
 
   const openAdminModal = (e: React.MouseEvent) => {
@@ -109,7 +134,7 @@ const ParkingSlot = ({ parking }: ParkingSlotProps) => {
   return (
     <div className="parking-slot-container">
       <div
-        onClick={openReservationModal}
+        onClick={handleSlotClick}
         className={`parking-slot ${
           parking.status === ParkingStatus.FREE
             ? "slot-free"
@@ -153,6 +178,19 @@ const ParkingSlot = ({ parking }: ParkingSlotProps) => {
           onClose={() => setReservationModalIsOpen(false)}
         />
       </Modal>
+
+      {occupyingUser && (
+        <ReservationDetailsModal
+          isOpen={detailsModalIsOpen}
+          onClose={() => setDetailsModalIsOpen(false)}
+          user={occupyingUser}
+          carPlate={occupyingUser.carPlate}
+          carUrl={occupyingUser.carUrl}
+          photoUrl={occupyingUser.photoUrl}
+          displayName={occupyingUser.displayName || undefined}
+          reservationEnd={reservationEnd}
+        />
+      )}
 
       <Modal
         isOpen={adminModalIsOpen}
