@@ -10,8 +10,8 @@ import {
 import CarInfo from "../../models/CarInfo";
 import { useNavigate } from "react-router-dom";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { db, storage } from "../../config/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { auth, db, storage } from "../../config/firebase";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import {
   setPhotoUrl,
   updateDisplayName,
@@ -20,6 +20,8 @@ import {
 import NotificationInfo from "../../models/NotificationInfo";
 import NotificationType from "../../enums/NotificationType";
 import NotificationsList from "../notifications/notifications-list/NotificationsList";
+import { signOut } from "firebase/auth";
+import UserStatus from "../../enums/UserStatus";
 
 const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -170,6 +172,17 @@ const Profile = () => {
       throw new Error("Greska pri promeni profilne slike.");
     }
   };
+  const logout = async () => {
+    try {
+      if (!user) return;
+
+      const userDocRef = doc(db, "users", user.id);
+      await updateDoc(userDocRef, { status: UserStatus.OFFLINE });
+      signOut(auth);
+    } catch (err) {
+      throw new Error("Greska pri pamcenju statusa korisnika!");
+    }
+  };
 
   return (
     <main className="profile">
@@ -177,7 +190,7 @@ const Profile = () => {
         <span className="nav__back">
           <img onClick={back} src="assets/svg/back.svg" alt="back" />
         </span>
-        <button>Log Out</button>
+        <button onClick={logout}>Log Out</button>
       </nav>
 
       <div className="profile__info-container">

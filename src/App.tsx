@@ -34,7 +34,7 @@ function App() {
           try {
             await updateDoc(userDocRef, { status: UserStatus.ONLINE });
           } catch (err) {
-            throw new Error("Greska pri pamcenju statusa korisnika!", err);
+            throw new Error("Greska pri pamcenju statusa korisnika!" + err);
           }
 
           dispatch(setUser(user));
@@ -48,7 +48,6 @@ function App() {
     });
 
     return () => {
-      console.log("%c unsubscribe!", "color: lightgreen; font-size: 20px");
       unsubscribe();
     };
   }, [dispatch]);

@@ -1,9 +1,7 @@
-import ProfileMenu from "../../components/profile/ProfileMenu/ProfileMenu";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import ChatRoom from "../../components/chat/chat-room/ChatRoom";
 import TeamWall from "../../components/chat/team-wall/TeamWall";
 import Parking from "../../components/parking/Parking";
-import React, { useState } from "react";
 import Events from "../../components/events/Events";
 import Welcome from "../../components/welcome/Welcome";
 import Layout from "../../components/layout/Layout";
@@ -24,7 +22,6 @@ const Home = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   const location = useLocation();
-  const [profileMenuOpen, setProfileMenuOpen] = useState<boolean>(false);
 
   const navigateTo = (option?: NavOption) => {
     if (option) navigate(`/${option.toLowerCase()}`);
@@ -35,8 +32,8 @@ const Home = () => {
     return location.pathname.replace("/", "").toUpperCase();
   };
 
-  const toggleProfileMenu = () => {
-    setProfileMenuOpen(!profileMenuOpen);
+  const goToProfile = () => {
+    navigate("/profile");
   };
 
   return (
@@ -48,14 +45,13 @@ const Home = () => {
           </span>
           <span className="header__profile-logo">
             <img
-              onClick={toggleProfileMenu}
+              onClick={goToProfile}
               src="assets/svg/businessman.svg"
               alt="profile-menu"
             />
             {user && user.role === UserRole.ADMIN && (
               <span className="star">★</span>
             )}
-            <ProfileMenu isOpen={profileMenuOpen} />
           </span>
         </div>
         <nav className="home__nav">
@@ -68,7 +64,6 @@ const Home = () => {
             }`}
           >
             <img
-              onClick={toggleProfileMenu}
               src="assets/images/parking.png"
               alt="parking-logo"
               className="nav-item__icon"
@@ -84,7 +79,6 @@ const Home = () => {
             }`}
           >
             <img
-              onClick={toggleProfileMenu}
               src="assets/svg/chat-bubble.svg"
               alt="chat-bubble-logo"
               className="nav-item__icon"
@@ -100,7 +94,6 @@ const Home = () => {
             }`}
           >
             <img
-              onClick={toggleProfileMenu}
               src="assets/svg/team-hair.svg"
               alt="team-logo"
               className="nav-item__icon"
@@ -114,7 +107,6 @@ const Home = () => {
             }`}
           >
             <img
-              onClick={toggleProfileMenu}
               src="assets/svg/chair.svg"
               alt="chair-logo"
               className="nav-item__icon"
@@ -128,7 +120,6 @@ const Home = () => {
             }`}
           >
             <img
-              onClick={toggleProfileMenu}
               src="assets/svg/calendar.svg"
               alt="calendar-logo"
               className="nav-item__icon"

@@ -65,7 +65,7 @@ const Register = () => {
       const userRef = doc(db, "users", userId);
       await setDoc(userRef, { photoUrl }, { merge: true });
     } catch (err) {
-      throw new Error("Greska pri postavljanju profilne slike.", err);
+      throw new Error("Greska pri postavljanju profilne slike." + err);
     }
   };
 
@@ -87,7 +87,6 @@ const Register = () => {
         formData.password
       );
 
-      console.log("%c 1", "color: orange; font-size: 25px", cred);
       const usersCollection = collection(db, "users");
 
       const newUser: UserInfo = {
@@ -100,12 +99,11 @@ const Register = () => {
       };
 
       await setDoc(doc(usersCollection, newUser.id), newUser);
-      console.log("%c 3", "color: darkgreen; font-size: 25px");
       uploadProfilePicture(cred.user.uid);
     } catch (err) {
       setError("email", { type: "manual", message: "Invalid username" });
       setError("password", { type: "manual", message: "Invalid password" });
-      throw new Error("Greska pri registraciji korisnika.", err);
+      throw new Error("Greska pri registraciji korisnika." + err);
     }
   };
 

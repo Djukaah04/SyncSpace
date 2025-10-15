@@ -2,7 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import ParkingSlotInfo from "../../models/ParkingSlotInfo";
 import { AppDispatch } from "..";
 import { db } from "../../config/firebase";
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  QueryDocumentSnapshot,
+} from "firebase/firestore";
 import ReservationInfo from "../../models/ReservationInfo";
 import ParkingStatus from "../../enums/ParkingStatus";
 
@@ -57,16 +63,17 @@ export const fetchParking = () => async (dispatch: AppDispatch) => {
   }
 };
 
-export const deleteParking = (docs) => async (dispatch: AppDispatch) => {
-  try {
-    const batchPromises = docs.map((document) =>
-      deleteDoc(doc(db, "parking", document.id))
-    );
-    await Promise.all(batchPromises);
-  } catch (err) {
-    throw new Error("Error deleting parking:", err);
-  }
-};
+export const deleteParking =
+  (docs: QueryDocumentSnapshot[]) => async (dispatch: AppDispatch) => {
+    try {
+      const batchPromises = docs.map((document) =>
+        deleteDoc(doc(db, "parking", document.id))
+      );
+      await Promise.all(batchPromises);
+    } catch (err) {
+      throw new Error("Error deleting parking:" + err);
+    }
+  };
 
 export const deleteReservations = () => async (dispatch: AppDispatch) => {
   try {
@@ -77,7 +84,7 @@ export const deleteReservations = () => async (dispatch: AppDispatch) => {
     );
     await Promise.all(batchPromises);
   } catch (err) {
-    throw new Error("Error deleting reservations:", err);
+    throw new Error("Error deleting reservations:" + err);
   }
 };
 
