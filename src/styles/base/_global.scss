@@ -69,3 +69,8 @@ button {
   border-radius: 8px;
   cursor: pointer;
 }
+
+button:disabled {
+  background: grey;
+  cursor: not-allowed;
+}

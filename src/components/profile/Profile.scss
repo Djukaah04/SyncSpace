@@ -4,16 +4,14 @@
 
   display: flex;
   flex-direction: column;
-  background: $dark-blue;
-  // font-family: $ink-free;
 }
 
 .profile__nav {
   position: relative;
-  text-align: center;
+  display: flex;
+  justify-content: flex-end;
   padding: 18px;
   background-color: $white;
-  margin-bottom: 20px;
 }
 
 .nav__back {
@@ -34,13 +32,6 @@
   }
 }
 
-.nav__my-profile {
-  margin: 0;
-  font-size: 24px;
-  font-weight: bold;
-  color: $dark-blue;
-}
-
 .profile__picture-container {
   display: flex;
   align-items: center;
@@ -48,19 +39,15 @@
   border: 2px solid $white;
   border-radius: 50%;
   width: fit-content;
-  // text-align: center;
-  margin: 0 auto;
-  margin-bottom: -55px;
+  margin-bottom: 10px;
   z-index: 2;
   background-color: $white;
-  padding: 5px;
 
   &:hover:not(:has(.picture-container__upload:hover)) {
     .picture-container__picture {
       border-color: $black;
     }
     .picture-container__upload {
-      // display: block;
     }
   }
 }
@@ -74,14 +61,11 @@
 }
 
 .picture-container__upload {
-  // display: none;
   position: absolute;
   bottom: 0;
   right: 0px;
-  // left: 0;
   background-color: $white;
   border-radius: 50%;
-  // border: none;
 
   &:hover {
     background-color: lightgrey;
@@ -93,70 +77,135 @@
   cursor: pointer;
 }
 
+.profile__info-and-notifications {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .profile__info-container {
   background-color: $white;
-  border-radius: 40px;
-  padding: 80px 60px 60px;
-  margin: 0 20px 30px;
-  box-shadow: 0 4px 12px rgba($black, 0.2);
+  padding: 0 20px;
   text-align: center;
-
-  h1 {
-    margin-bottom: 15px;
-    font-family: $kabel-black;
-    color: $dark-blue;
-  }
-
-  h3 {
-    margin: 5px 0;
-    color: $darkgreen;
-  }
+  flex-grow: 1;
 }
 
 .profile__info {
   background-color: $white;
   border-radius: 20px;
-  padding: 30px 40px;
   max-width: 400px;
-  margin: 0 auto 20px;
-  box-shadow: 0 4px 15px rgba($black, 0.15);
   text-align: center;
+  min-width: 250px;
+}
 
-  .info-item {
-    margin-bottom: 10px;
-    font-size: 1rem;
-    color: $darkgreen;
-    display: flex;
-    justify-content: space-between;
+.info-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: $darkgreen;
+}
 
-    .info-item__label {
-      font-weight: bold;
-      color: $blue;
-      margin-right: 6px;
-    }
+.info-item--car {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: 100px;
+}
 
-    .info-item__value {
-      font-weight: normal;
-      color: $black;
-      word-break: break-all;
-      font-family: $kabel-black;
-    }
+.info-item__label {
+  font-weight: bold;
+  color: $blue;
+  margin-right: 6px;
+
+  &--error {
+    color: red;
   }
 }
 
-.profile__car-container {
-  .car-container__select-a-car {
-    margin-bottom: 10px;
-    font-weight: bold;
-    color: $blue;
-  }
+.info-item__label--car {
+  margin-right: 20px;
+}
+
+.info-item__edit-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.license-plate-input {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.info-item__value {
+  display: flex;
+  font-weight: normal;
+  color: $black;
+  word-break: break-all;
+  font-family: $kabel-black;
+  margin-bottom: -3px;
+  margin-left: 20px;
+  margin-top: 5px;
+}
+
+.info-item__value-text {
+  margin: 0;
+}
+
+.info-item__value-edit {
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.info-item__value-edit-img {
+  width: 16px;
+}
+
+.info-item__value--id {
+  font-size: 12px;
+}
+
+.car-plate-error {
+  position: absolute;
+  bottom: -19px;
+  margin-left: 21px;
+  color: red;
+  font-size: 12px;
+}
+
+.no-plate-added {
+  color: #aaa;
 }
 
 .profile__car {
-  width: 100px;
-  margin: 10px 0;
+  width: 60px;
+  transform: rotate(-90deg);
+  margin-left: 40px;
   border-radius: 12px;
   box-shadow: 0 3px 8px rgba($black, 0.15);
+}
+
+.profile__trash {
+  width: 25px;
+  z-index: 4;
+  cursor: pointer;
+  margin-left: 30px;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.car-selection-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .car-select-list {
@@ -166,9 +215,9 @@
   align-items: stretch;
   background-color: white;
   border-radius: 20px;
-  padding: 40px 0 20px 0;
-  margin-top: 30px;
+  padding: 20px 0;
   row-gap: 25px;
+  margin-bottom: 0;
 }
 
 .car-select-item {
@@ -181,19 +230,15 @@
   transition: all 0.2s ease;
 
   img {
-    // width: 70px;
     border-radius: 6px;
-    // box-shadow: 0 2px 6px rgba($black, 0.1);
   }
 
   &:hover:not(.car-select-item--selected) {
-    // border: 2px dashed red;
     transform: scale(1.2);
   }
 }
 
 .car-select-item--selected {
-  // border: 2px solid $dark-blue;
   transform: translateY(-20px) scale(1.2);
 
   transition: transform 0.2s ease, border 0.2s ease;
@@ -216,11 +261,15 @@ button {
   }
 
   &--open {
-    background-color: #dc3545; // red for "open" state
+    background-color: #dc3545;
     &:hover {
       background-color: darken(#dc3545, 10%);
     }
   }
+}
+
+.profile__car-selection-btn {
+  font-size: 12px;
 }
 
 .btn-confirm {

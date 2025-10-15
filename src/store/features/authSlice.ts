@@ -28,13 +28,33 @@ const authSlice = createSlice({
       if (!state.user) return;
       state.user.carUrl = undefined;
     },
+    updateCarPlate: (state, action: PayloadAction<string | undefined>) => {
+      if (!state.user) return;
+      state.user.carPlate = action.payload;
+    },
     setPhotoUrl: (state, action: PayloadAction<string>) => {
       if (!state.user) return;
       state.user.photoUrl = action.payload;
     },
+    updateDisplayName: (state, action: PayloadAction<string>) => {
+      if (!state.user) return;
+      state.user.displayName = action.payload;
+    },
+    updateStatus: (state, action: PayloadAction<string>) => {
+      if (!state.user) return;
+      state.user.status = action.payload as UserStatus;
+    },
   },
 });
 
-export const { setUser, clearUser, updateCar, clearCar, setPhotoUrl } =
-  authSlice.actions;
+export const {
+  setUser,
+  clearUser,
+  updateCar,
+  clearCar,
+  updateCarPlate,
+  setPhotoUrl,
+  updateDisplayName,
+  updateStatus,
+} = authSlice.actions;
 export default authSlice.reducer;

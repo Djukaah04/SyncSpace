@@ -2,7 +2,11 @@ import { db } from "../config/firebase";
 import CarInfo from "../models/CarInfo";
 import { collection, deleteField, doc, updateDoc } from "firebase/firestore";
 import { AppDispatch } from "../store";
-import { clearCar, updateCar } from "../store/features/authSlice";
+import {
+  clearCar,
+  updateCar,
+  updateCarPlate,
+} from "../store/features/authSlice";
 
 const cars: CarInfo[] = [
   {
@@ -100,7 +104,7 @@ export const addCar =
     try {
       await updateDoc(doc(usersRef, userId), { carUrl: car.path });
     } catch (err) {
-      console.error("Error adding a car in carImageService:", err);
+      console.error("Error adding a car in carService:", err);
     }
 
     dispatch(updateCar(car.path));
@@ -112,8 +116,21 @@ export const deleteCar =
     try {
       await updateDoc(doc(usersRef, userId), { carUrl: deleteField() });
     } catch (err) {
-      console.error("Error deleting a car in carImageService:", err);
+      console.error("Error deleting a car in carService:", err);
     }
 
     dispatch(clearCar());
+  };
+
+export const modifyCarPlate =
+  (carPlate: string, userId: string | undefined) =>
+  async (dispatch: AppDispatch) => {
+    const usersRef = collection(db, "users");
+    try {
+      await updateDoc(doc(usersRef, userId), { carPlate });
+    } catch (err) {
+      console.error("Error adding a car in carService:", err);
+    }
+
+    dispatch(updateCarPlate(carPlate));
   };

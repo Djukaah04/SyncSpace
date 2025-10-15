@@ -1,4 +1,5 @@
 import UserStatus from "../enums/UserStatus.ts";
+import UserRole from "../enums/UserRole.ts";
 
 interface UserInfo {
   id: string;
@@ -8,8 +9,9 @@ interface UserInfo {
   age?: number;
   status: UserStatus;
   carUrl?: string;
+  carPlate?: string;
   photoUrl?: string;
-  role?: string;
+  role?: UserRole;
 }
 
 export default UserInfo;
