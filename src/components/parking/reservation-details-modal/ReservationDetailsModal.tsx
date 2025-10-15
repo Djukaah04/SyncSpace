@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "../../../utils/modal/Modal";
 import UserInfo from "../../../models/UserInfo";
+import "./ReservationDetailsModal.scss";
 
 interface ReservationDetailsModalProps {
   isOpen: boolean;
@@ -26,56 +27,71 @@ const ReservationDetailsModal: React.FC<ReservationDetailsModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="reservation-details-modal">
-        <h2>Reservation Details</h2>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 12,
-          }}
-        >
-          {photoUrl && (
-            <img
-              src={photoUrl}
-              alt="user"
-              style={{
-                width: 70,
-                height: 70,
-                borderRadius: "50%",
-                objectFit: "cover",
-              }}
-            />
-          )}
-          <div>
-            <b>Name:</b> {displayName || user.displayName}
-          </div>
-          {carUrl && (
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <h2 className="reservation-details-modal__title">
+          Reservation Details
+        </h2>
+
+        <div className="reservation-details-modal__content">
+          {/* LEFT - text block */}
+          <div className="reservation-details-modal__left">
+            {photoUrl && (
               <img
-                src={carUrl}
-                alt="car"
-                style={{
-                  width: 60,
-                  height: 40,
-                  objectFit: "contain",
-                  borderRadius: 8,
-                }}
+                className="reservation-details-modal__avatar"
+                src={photoUrl}
+                alt="user"
               />
-              <span>
-                <b>Car plate:</b> {carPlate || user.carPlate || "-"}
+            )}
+
+            <div className="reservation-details-modal__row">
+              <span className="reservation-details-modal__label">Name:</span>
+              <span className="reservation-details-modal__value">
+                {displayName || user.displayName}
               </span>
             </div>
-          )}
-          <div>
-            <b>Email:</b> {user.email || "-"}
+
+            <div className="reservation-details-modal__row">
+              <span className="reservation-details-modal__label">Email:</span>
+              <span className="reservation-details-modal__value">
+                {user.email || "-"}
+              </span>
+            </div>
+
+            {reservationEnd && (
+              <div className="reservation-details-modal__row">
+                <span className="reservation-details-modal__label">
+                  Reserved until:
+                </span>
+                <span className="reservation-details-modal__value reservation-details-modal__value--highlight">
+                  {reservationEnd.toLocaleString()}
+                </span>
+              </div>
+            )}
           </div>
-          {reservationEnd && (
-            <div>
-              <b>Reserved until:</b> {reservationEnd.toLocaleString()}
+
+          {/* RIGHT - car block */}
+          {carUrl && (
+            <div className="reservation-details-modal__right">
+              <img
+                className="reservation-details-modal__car-img"
+                src={carUrl}
+                alt="car"
+              />
+              <div className="reservation-details-modal__row">
+                <span className="reservation-details-modal__label">Plate:</span>
+                <span className="reservation-details-modal__value">
+                  {carPlate || user.carPlate || "-"}
+                </span>
+              </div>
             </div>
           )}
         </div>
+
+        <button
+          className="reservation-details-modal__close-btn"
+          onClick={onClose}
+        >
+          Close
+        </button>
       </div>
     </Modal>
   );

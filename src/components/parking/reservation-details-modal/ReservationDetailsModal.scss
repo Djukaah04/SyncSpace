@@ -1,0 +1,125 @@
+@import "../../../styles/helpers/variables.scss";
+
+.reservation-details-modal {
+  background: $white;
+  border-radius: 16px;
+  padding: 32px 28px;
+  max-width: 520px;
+  width: 90vw;
+  margin: auto;
+  box-shadow: 0 8px 24px rgba($black, 0.12);
+  font-family: $kabel-black;
+  color: $darkgreen;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  animation: fadeIn 0.3s ease;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0 0 24px;
+    color: $darkgreen;
+    letter-spacing: 0.5px;
+    align-self: center;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 24px;
+  }
+
+  &__left {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__right {
+    flex: 0 0 auto;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid $beige;
+    box-shadow: 0 4px 12px rgba($black, 0.1);
+    align-self: center;
+    margin-bottom: 8px;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 14px;
+    background: $beige;
+    border-radius: 10px;
+    font-size: 0.95rem;
+  }
+
+  &__car-img {
+    width: 100px;
+    object-fit: contain;
+  }
+
+  &__label {
+    font-weight: 600;
+    color: $darkgreen;
+    margin-right: 8px;
+  }
+
+  &__value {
+    font-weight: 500;
+    color: $darkgreen;
+
+    &--highlight {
+      color: $purple;
+      font-weight: 700;
+    }
+  }
+
+  &__close-btn {
+    margin-top: 24px;
+    padding: 10px 28px;
+    background: $blue;
+    color: $white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+    align-self: center;
+
+    &:hover {
+      background: $dark-blue;
+      transform: translateY(-2px);
+    }
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
