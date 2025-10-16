@@ -1,7 +1,4 @@
-import { collection, onSnapshot } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { db } from "../../../config/firebase";
-import { setUsers } from "../../../store/features/usersSlice";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import UserInfo from "../../../models/UserInfo";
@@ -32,23 +29,6 @@ const ChatRoom = () => {
   const isNotMe = (userToCompare: UserInfo) => {
     return user?.id !== userToCompare.id;
   };
-
-  useEffect(() => {
-    const usersRef = collection(db, "users");
-
-    const unsubscribe = onSnapshot(usersRef, (snapshot) => {
-      const usersList: UserInfo[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...(doc.data() as Omit<UserInfo, "id">),
-      }));
-      dispatch(setUsers(usersList));
-    });
-
-    return () => {
-      console.log("%c ChatRoom UNSUBSCRIBE", "color: red; font-size: 20px");
-      unsubscribe();
-    };
-  }, [dispatch]);
 
   return (
     <div className="chatroom">

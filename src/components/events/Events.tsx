@@ -29,6 +29,7 @@ const Events = () => {
   const [createEventVisible, setCreateEventVisible] = useState(false);
   const [events, setEvents] = useState<EventInfo[]>([]);
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
+  const [mapVisible, setMapVisible] = useState(false);
 
   const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
@@ -37,15 +38,6 @@ const Events = () => {
   );
   const [eventDate, setEventDate] = useState<string>("");
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
-  const [allUsers, setAllUsers] = useState<
-    {
-      id: string;
-      displayName?: string;
-      email?: string;
-      photoUrl?: string;
-      teamId?: string;
-    }[]
-  >([]);
 
   const [pendingLocation, setPendingLocation] = useState<{
     lat: number;
@@ -58,8 +50,9 @@ const Events = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const mapRef = useRef<any>(null);
+  const users = useSelector((state: RootState) => state.users.list);
 
+  const mapRef = useRef<any>(null);
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -72,25 +65,6 @@ const Events = () => {
         (err) => setError(err.message)
       );
     } else setError("Geolocation is not supported by this browser.");
-  }, []);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const usersCol = collection(db, "users");
-        const snap = await (
-          await import("firebase/firestore")
-        ).getDocs(usersCol);
-        const users = snap.docs.map((d) => ({
-          id: d.id,
-          ...(d.data() as any),
-        }));
-        setAllUsers(users);
-      } catch (err) {
-        console.error("Failed to load users", err);
-      }
-    };
-    fetchUsers();
   }, []);
 
   useEffect(() => {
@@ -108,6 +82,10 @@ const Events = () => {
     });
     return () => unsubscribe();
   }, []);
+
+  const toggleMap = () => {
+    setMapVisible((prev) => !prev);
+  };
 
   const handleMapClick = (e: MapMouseEvent) => {
     const { lng, lat } = e.lngLat;
@@ -138,13 +116,12 @@ const Events = () => {
   };
 
   const inviteTeam = () => {
-    if (!user) return;
-    if ((user as any).teamId) {
-      const team = allUsers.filter((u) => u.teamId === (user as any).teamId);
-      setInvitedUsers(team.map((t) => t.id));
-    } else {
-      setInvitedUsers(allUsers.map((u) => u.id));
-    }
+    const team = users.filter((u) => u.team === user?.team);
+    setInvitedUsers(team.map((member) => member.id));
+  };
+
+  const inviteCompany = () => {
+    setInvitedUsers(users.filter((u) => u.id !== user?.id).map((u) => u.id));
   };
 
   const addEvent = async () => {
@@ -212,9 +189,9 @@ const Events = () => {
 
   return (
     <>
-      <div className="events-list">
-        <div className="events-list__header">
-          <h3 className="events-list__title">📌 Events</h3>
+      <div className="events">
+        <div className="events__header">
+          <h3 className="events__title">📌 Events</h3>
           <img
             onClick={toggleCreateEvent}
             className="events-list__create-event"
@@ -223,245 +200,278 @@ const Events = () => {
           />
         </div>
         {events.length === 0 && <p className="empty">No events yet.</p>}
-        {events.map((event) => (
-          <div
-            className={`event-card event--${event.type.toLowerCase()}`}
-            key={event.id}
-          >
-            <div className="event-card__info">
-              <h4>{event.title || "Untitled"}</h4>
-              <p>{event.comment}</p>
-              <small>
-                Type: {event.type} •{" "}
-                {event.eventDate
-                  ? new Date(event.eventDate).toLocaleDateString()
-                  : "No date"}
-              </small>
-              {user && user.role === UserRole.ADMIN && (
-                <button
-                  className="btn-remove"
-                  onClick={() => removeMarker(event.id, event.id)}
+
+        <div className="events__content">
+          <div className="event-cards-and-map">
+            <div className="event-cards">
+              {events.map((event) => (
+                <div
+                  className={`event-card event--${event.type.toLowerCase()}`}
+                  key={event.id}
                 >
-                  Delete
-                </button>
-              )}
+                  <div className="event-card__info">
+                    <h4>{event.title || "Untitled"}</h4>
+                    <p>{event.comment}</p>
+                    <small>
+                      Type: {event.type} •{" "}
+                      {event.eventDate
+                        ? new Date(event.eventDate).toLocaleDateString()
+                        : "No date"}
+                    </small>
+                    {user && user.role === UserRole.ADMIN && (
+                      <button
+                        className="btn-remove"
+                        onClick={() => removeMarker(event.id, event.id)}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                  <div className="event-card__invitees">
+                    {event.invited &&
+                      event.invited.length > 0 &&
+                      event.invited.map((userId) => {
+                        const invitedUser = users.find((u) => u.id === userId);
+                        if (!invitedUser) return null;
+                        return (
+                          <div key={userId} className="event-card__invitee">
+                            <img
+                              src={
+                                invitedUser.photoUrl ||
+                                "assets/svg/businessman.svg"
+                              }
+                              alt="avatar"
+                              className="invite-avatar"
+                            />
+                            <span className="invite-name">
+                              {invitedUser.id === user?.id
+                                ? "Me"
+                                : invitedUser.displayName || invitedUser.email}
+                            </span>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="event-card__invitees">
-              {event.invited &&
-                event.invited.length > 0 &&
-                event.invited.map((userId) => {
-                  const invitedUser = allUsers.find((u) => u.id === userId);
-                  if (!invitedUser) return null;
+            {mapVisible && (
+              <div className="map-container">
+                <div className="map">
+                  <Map
+                    ref={mapRef}
+                    initialViewState={{
+                      longitude: location.lon,
+                      latitude: location.lat,
+                      zoom: location.zoom,
+                    }}
+                    mapStyle="https://api.maptiler.com/maps/streets/style.json?key=2oADDqd5xOSYXzILFpwA"
+                    onLoad={(e) => (mapRef.current = e.target)}
+                    onClick={handleMapClick}
+                    style={{ width: "100%", height: "100%" }}
+                  >
+                    {pendingLocation && (
+                      <Marker
+                        longitude={pendingLocation.lon}
+                        latitude={pendingLocation.lat}
+                      >
+                        <div
+                          className="marker marker-pending"
+                          title="Pending location"
+                        />
+                      </Marker>
+                    )}
+
+                    {eventLocation && (
+                      <Marker
+                        longitude={eventLocation.lon}
+                        latitude={eventLocation.lat}
+                      >
+                        <div
+                          className="marker marker-temp"
+                          title="Event location"
+                        />
+                      </Marker>
+                    )}
+
+                    {events.map((event) => (
+                      <div
+                        key={event.id}
+                        onMouseEnter={() => setHoveredEvent(event.id)}
+                      >
+                        <Marker longitude={event.lon} latitude={event.lat}>
+                          <div
+                            className={`marker marker--${event.type.toLowerCase()} ${
+                              hoveredEvent === event.id ? "active" : ""
+                            }`}
+                            title={event.comment}
+                          />
+                          {hoveredEvent === event.id && (
+                            <Popup
+                              longitude={event.lon}
+                              latitude={event.lat}
+                              closeButton={false}
+                              offset={10}
+                            >
+                              <div
+                                className="popup-content"
+                                onMouseLeave={() => setHoveredEvent(null)}
+                              >
+                                <h4>{event.title}</h4>
+                                <p>{event.comment}</p>
+                                <small>
+                                  {event.eventDate
+                                    ? `When: ${new Date(
+                                        event.eventDate
+                                      ).toLocaleDateString()}`
+                                    : "No date"}
+                                </small>
+                              </div>
+                            </Popup>
+                          )}
+                        </Marker>
+                      </div>
+                    ))}
+                  </Map>
+                </div>
+              </div>
+            )}
+          </div>
+          {createEventVisible && (
+            <div className="create-event">
+              <h3
+                onClick={() => {
+                  console.log(
+                    "%c invitedUsers",
+                    "color: orange; font-size: 25px",
+                    invitedUsers
+                  );
+                }}
+                className="create-event__title"
+              >
+                📍 Create Event
+              </h3>
+              <label>
+                Title
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Event title"
+                />
+              </label>
+
+              <label>
+                Comment
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Details"
+                />
+              </label>
+
+              <label>
+                Type
+                <select
+                  value={selectedType}
+                  onChange={(e) =>
+                    setSelectedType(e.target.value as MarkerType)
+                  }
+                >
+                  <option value={MarkerType.EVENT}>Event</option>
+                  <option value={MarkerType.MEETING}>Meeting</option>
+                  <option value={MarkerType.ANNOUNCEMENT}>Announcement</option>
+                  <option value={MarkerType.MAINTENANCE}>Maintenance</option>
+                  <option value={MarkerType.WARNING}>Warning</option>
+                  <option value={MarkerType.REMINDER}>Reminder</option>
+                </select>
+              </label>
+
+              <label>
+                Date (optional)
+                <input
+                  type="date"
+                  value={eventDate}
+                  onChange={(e) => setEventDate(e.target.value)}
+                />
+              </label>
+
+              <div className="invite-section">
+                <strong>Invite people</strong>
+                <div className="invite-people__invite-options">
+                  <button
+                    className="invite-options__button invite-options__button--team"
+                    type="button"
+                    onClick={inviteTeam}
+                  >
+                    TEAM {user?.team}
+                  </button>
+                  {user?.role === UserRole.ADMIN && (
+                    <button
+                      className="invite-options__button invite-options__button--team"
+                      type="button"
+                      onClick={inviteCompany}
+                    >
+                      COMPANY
+                    </button>
+                  )}
+                  <button
+                    className="invite-options__button"
+                    type="button"
+                    onClick={() => setInvitedUsers([])}
+                  >
+                    Clear
+                  </button>
+                </div>
+
+                {users.length === 0 && <div>Loading users...</div>}
+                {users.map((u) => {
+                  const checked = invitedUsers.includes(u.id);
                   return (
-                    <div key={userId} className="event-card__invitee">
+                    <label key={u.id} className="invited-people__list-item">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleInvite(u.id)}
+                        disabled={u.id === user?.id}
+                      />
                       <img
-                        src={
-                          invitedUser.photoUrl || "assets/svg/businessman.svg"
-                        }
+                        src={u.photoUrl || "assets/svg/businessman.svg"}
                         alt="avatar"
                         className="invite-avatar"
                       />
+
                       <span className="invite-name">
-                        {invitedUser.displayName || invitedUser.email}
+                        {u.id === user?.id ? "Me" : u.displayName || u.email}
                       </span>
-                    </div>
+                    </label>
                   );
                 })}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="events-options">
-        {createEventVisible && (
-          <div className="create-event">
-            <h3 className="create-event__title">📍 Create Event</h3>
-            <label>
-              Title
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Event title"
-              />
-            </label>
-
-            <label>
-              Comment
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Details"
-              />
-            </label>
-
-            <label>
-              Type
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value as MarkerType)}
-              >
-                <option value={MarkerType.EVENT}>Event</option>
-                <option value={MarkerType.MEETING}>Meeting</option>
-                <option value={MarkerType.ANNOUNCEMENT}>Announcement</option>
-                <option value={MarkerType.MAINTENANCE}>Maintenance</option>
-                <option value={MarkerType.WARNING}>Warning</option>
-                <option value={MarkerType.REMINDER}>Reminder</option>
-              </select>
-            </label>
-
-            <label>
-              Date (optional)
-              <input
-                type="date"
-                value={eventDate}
-                onChange={(e) => setEventDate(e.target.value)}
-              />
-            </label>
-
-            <label>
-              Location
-              {eventLocation ? (
-                <div className="location-controls">
-                  <button onClick={() => flyToEvent(eventLocation)}>
-                    📍 See location
-                  </button>
-                  <button onClick={() => setEventLocation(null)}>
-                    ❌ Clear location
-                  </button>
-                </div>
-              ) : (
-                <p>No location chosen.</p>
-              )}
-            </label>
-
-            <div className="invite-section">
-              <strong>Invite people</strong>
-              <div className="invite-people__invite-options">
-                <button
-                  className="invite-options__button invite-options__button--team"
-                  type="button"
-                  onClick={inviteTeam}
-                >
-                  Invite team
-                </button>
-                <button
-                  className="invite-options__button"
-                  type="button"
-                  onClick={() => setInvitedUsers([])}
-                >
-                  Clear
-                </button>
               </div>
 
-              {allUsers.length === 0 && <div>Loading users...</div>}
-              {allUsers.map((u) => {
-                const checked = invitedUsers.includes(u.id);
-                return (
-                  <label key={u.id} className="invited-people__list-item">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggleInvite(u.id)}
-                    />
-                    <img
-                      src={u.photoUrl || "assets/svg/businessman.svg"}
-                      alt="avatar"
-                      className="invite-avatar"
-                    />
-                    <span className="invite-name">
-                      {u.displayName || u.email}
-                    </span>
-                  </label>
-                );
-              })}
+              <label>
+                Location <button onClick={toggleMap}>Toggle map</button>
+                {eventLocation ? (
+                  <div className="location-controls">
+                    <button onClick={() => flyToEvent(eventLocation)}>
+                      📍 See location
+                    </button>
+                    <button onClick={() => setEventLocation(null)}>
+                      ❌ Clear location
+                    </button>
+                  </div>
+                ) : (
+                  <p>No location chosen.</p>
+                )}
+              </label>
+
+              {error && <div className="error-text">{error}</div>}
+
+              <div className="popup-actions">
+                <button onClick={addEvent}>Save event</button>
+              </div>
             </div>
-
-            {error && <div className="error-text">{error}</div>}
-
-            <div className="popup-actions">
-              <button className="btn-confirm" onClick={addEvent}>
-                Save event
-              </button>
-            </div>
-          </div>
-        )}
-
-        <div className="map-container">
-          <div className="map">
-            <Map
-              ref={mapRef}
-              initialViewState={{
-                longitude: location.lon,
-                latitude: location.lat,
-                zoom: location.zoom,
-              }}
-              mapStyle="https://api.maptiler.com/maps/streets/style.json?key=2oADDqd5xOSYXzILFpwA"
-              onLoad={(e) => (mapRef.current = e.target)}
-              onClick={handleMapClick}
-              style={{ width: "100%", height: "100%" }}
-            >
-              {pendingLocation && (
-                <Marker
-                  longitude={pendingLocation.lon}
-                  latitude={pendingLocation.lat}
-                >
-                  <div
-                    className="marker marker-pending"
-                    title="Pending location"
-                  />
-                </Marker>
-              )}
-
-              {eventLocation && (
-                <Marker
-                  longitude={eventLocation.lon}
-                  latitude={eventLocation.lat}
-                >
-                  <div className="marker marker-temp" title="Event location" />
-                </Marker>
-              )}
-
-              {events.map((event) => (
-                <div
-                  key={event.id}
-                  onMouseEnter={() => setHoveredEvent(event.id)}
-                >
-                  <Marker longitude={event.lon} latitude={event.lat}>
-                    <div
-                      className={`marker marker--${event.type.toLowerCase()} ${
-                        hoveredEvent === event.id ? "active" : ""
-                      }`}
-                      title={event.comment}
-                    />
-                    {hoveredEvent === event.id && (
-                      <Popup
-                        longitude={event.lon}
-                        latitude={event.lat}
-                        closeButton={false}
-                        offset={10}
-                      >
-                        <div
-                          className="popup-content"
-                          onMouseLeave={() => setHoveredEvent(null)}
-                        >
-                          <h4>{event.title}</h4>
-                          <p>{event.comment}</p>
-                          <small>
-                            {event.eventDate
-                              ? `When: ${new Date(
-                                  event.eventDate
-                                ).toLocaleDateString()}`
-                              : "No date"}
-                          </small>
-                        </div>
-                      </Popup>
-                    )}
-                  </Marker>
-                </div>
-              ))}
-            </Map>
-          </div>
+          )}
         </div>
       </div>
 

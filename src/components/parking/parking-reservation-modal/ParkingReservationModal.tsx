@@ -117,12 +117,12 @@ const ParkingReservationModal = ({ parking, onClose }: ParkingSlotProps) => {
       return;
     }
 
-    // await addDoc(reservationsRef, {
-    //   userId: user.id,
-    //   parkingSlotId: parking.id,
-    //   startTime: Timestamp.fromDate(startTime),
-    //   endTime: Timestamp.fromDate(endTime),
-    // });
+    await addDoc(reservationsRef, {
+      userId: user.id,
+      parkingSlotId: parking.id,
+      startTime: Timestamp.fromDate(startTime),
+      endTime: Timestamp.fromDate(endTime),
+    });
 
     const reservationTimeFormatted = formatDateRange(startTime, endTime);
     const message = `Parking slot ${parking.number} reserved on ${reservationTimeFormatted}!`;
