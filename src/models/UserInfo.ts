@@ -4,14 +4,15 @@ import UserRole from "../enums/UserRole.ts";
 interface UserInfo {
   id: string;
   email: string | null;
-  displayName: string | null;
-  color: string;
+  displayName?: string;
   age?: number;
+  role?: UserRole;
+  photoUrl?: string;
   status: UserStatus;
   carUrl?: string;
   carPlate?: string;
-  photoUrl?: string;
-  role?: UserRole;
+  color: string;
+  team?: number;
 }
 
 export default UserInfo;

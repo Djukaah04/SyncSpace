@@ -21,6 +21,7 @@ import { setNotifications } from "../../../store/features/notificationsSlice";
 const typeIcons: Record<NotificationType, string> = {
   [NotificationType.EVENT]: "assets/svg/calendar.svg",
   [NotificationType.GENERAL]: "assets/svg/assistant.svg",
+  [NotificationType.CAR]: "assets/svg/car-general.svg",
   [NotificationType.MESSAGE]: "assets/svg/chat.svg",
   [NotificationType.REMINDER]: "assets/svg/reminder.svg",
 };

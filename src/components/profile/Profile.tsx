@@ -22,6 +22,7 @@ import NotificationType from "../../enums/NotificationType";
 import NotificationsList from "../notifications/notifications-list/NotificationsList";
 import { signOut } from "firebase/auth";
 import UserStatus from "../../enums/UserStatus";
+import { sendNotification } from "../../services/notificationsService";
 
 const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -86,6 +87,9 @@ const Profile = () => {
     await dispatch(addCar(car, user?.id));
     setCarPlateError("");
     setCarSelectIsOpen(false);
+
+    const message = "You have successfully selected a car!";
+    await sendNotification(NotificationType.GENERAL, message, user);
   };
 
   const saveDisplayName = async () => {
@@ -120,32 +124,11 @@ const Profile = () => {
     setEditStatus(false);
   };
 
-  const generateId = (type: NotificationType) => {
-    const firstName = user?.displayName?.split(" ")[0];
-    const randomId = crypto.randomUUID().split("-")[0];
-    const id = `${firstName}-${type}-${randomId}`;
-
-    return id;
-  };
-
-  const removeCar = () => {
+  const removeCar = async () => {
     dispatch(deleteCar(user?.id));
 
-    const id = generateId(NotificationType.GENERAL);
-    const notification: NotificationInfo = {
-      id,
-      read: false,
-      text: `You have successfully deleted your car!`,
-      userId: user?.id,
-      timestamp: new Date().getTime(),
-      type: NotificationType.GENERAL,
-    };
-
-    try {
-      setDoc(doc(db, "notifications", id), notification);
-    } catch (err) {
-      console.error("Error when saving car!", err);
-    }
+    const message = "You have successfully deleted your car!";
+    await sendNotification(NotificationType.GENERAL, message, user);
   };
 
   const back = () => {
@@ -269,6 +252,7 @@ const Profile = () => {
                 </>
               )}
             </div>
+
             <div className="info-item">
               <span className="info-item__label">Status:</span>
               {editStatus ? (
@@ -313,6 +297,16 @@ const Profile = () => {
                 </>
               )}
             </div>
+
+            <div className="info-item">
+              <span className="info-item__label">Team:</span>
+              <div className="info-item__value">
+                <p className="info-item__value-text">
+                  {user?.team || <span style={{ color: "#aaa" }}>No name</span>}
+                </p>
+              </div>
+            </div>
+
             {user?.email && (
               <div
                 onClick={() => {

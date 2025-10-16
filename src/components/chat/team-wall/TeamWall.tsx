@@ -29,7 +29,7 @@ const TeamWall = () => {
   return (
     <div className="team-wall">
       <h1>Team Wall</h1>
-      <ChatBox roomId="team-wall" friendName={null} />
+      <ChatBox roomId="team-wall" friendName={undefined} />
     </div>
   );
 };

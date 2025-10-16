@@ -5,7 +5,7 @@ import ChatBox from "../../chat-box/ChatBox";
 
 interface RoomProps {
   roomId: string | null;
-  friendName: string | null;
+  friendName: string | undefined;
   friendPhoto: string | undefined;
 }
 

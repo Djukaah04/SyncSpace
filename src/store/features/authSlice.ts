@@ -3,10 +3,10 @@ import UserInfo from "../../models/UserInfo";
 import UserStatus from "../../enums/UserStatus";
 
 interface AuthState {
-  user: UserInfo | null;
+  user: UserInfo | undefined;
 }
 const initialState: AuthState = {
-  user: null,
+  user: undefined,
 };
 
 const authSlice = createSlice({
@@ -18,7 +18,7 @@ const authSlice = createSlice({
       state.user.status = UserStatus.ONLINE;
     },
     clearUser: (state) => {
-      state.user = null;
+      state.user = undefined;
     },
     updateCar: (state, action: PayloadAction<string>) => {
       if (!state.user) return;

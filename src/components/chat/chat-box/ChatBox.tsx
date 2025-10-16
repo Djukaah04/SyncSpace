@@ -19,7 +19,7 @@ import { setMessages } from "../../../store/features/chatSlice";
 
 interface RoomProps {
   roomId: string | null;
-  friendName: string | null;
+  friendName: string | undefined;
 }
 
 const ChatBox = ({ roomId, friendName }: RoomProps) => {

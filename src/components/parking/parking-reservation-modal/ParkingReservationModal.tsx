@@ -10,6 +10,9 @@ import { db } from "../../../config/firebase";
 import { setDateForShow } from "../../../store/features/parkingSlice";
 import ReservationFirestore from "../../../store/types/ReservationFirestore";
 import { Timestamp } from "firebase/firestore";
+import { sendNotification } from "../../../services/notificationsService";
+import NotificationType from "../../../enums/NotificationType";
+import { formatDateRange } from "../../../services/formattingService";
 
 export interface Range {
   startDate?: Date;
@@ -114,12 +117,17 @@ const ParkingReservationModal = ({ parking, onClose }: ParkingSlotProps) => {
       return;
     }
 
-    await addDoc(reservationsRef, {
-      userId: user.id,
-      parkingSlotId: parking.id,
-      startTime: Timestamp.fromDate(startTime),
-      endTime: Timestamp.fromDate(endTime),
-    });
+    // await addDoc(reservationsRef, {
+    //   userId: user.id,
+    //   parkingSlotId: parking.id,
+    //   startTime: Timestamp.fromDate(startTime),
+    //   endTime: Timestamp.fromDate(endTime),
+    // });
+
+    const reservationTimeFormatted = formatDateRange(startTime, endTime);
+    const message = `Parking slot ${parking.number} reserved on ${reservationTimeFormatted}!`;
+    await sendNotification(NotificationType.CAR, message, user);
+
     onClose();
   };
 
