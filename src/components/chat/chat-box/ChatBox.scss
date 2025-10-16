@@ -2,12 +2,8 @@
   position: relative;
 
   // border: 1px solid black;
-  box-shadow: rgba(31, 57, 89, 0.5) 0px 0px 20px 2px;
-  // box-shadow: $dark-blue 0px 54px 55px, $dark-blue 0px -12px 30px,
-  //   $dark-blue 0px 4px 6px, $dark-blue 0px 12px 13px, $dark-blue 0px -3px 5px;
-  // box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-  //   rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-  //   rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  box-shadow: rgba(31, 57, 89, 0.5) 0px 20px 20px 2px;
+
   border-radius: 5px;
   padding: 10px;
   background-color: $white;
@@ -18,7 +14,6 @@
   flex-direction: column;
   padding: 0 40px;
   background-color: white;
-  // overflow: auto;
   overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -41,12 +36,10 @@
 }
 
 .message-row {
-  // position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   color: white;
-  // padding-left: 10px;
 }
 
 .message-row__info {
@@ -70,7 +63,6 @@
 }
 
 .info__name {
-  // font-size: 15px;
   font-weight: bold;
   margin: 0;
   margin-right: 10px;
@@ -97,12 +89,10 @@
 }
 
 .message-row--me {
-  // justify-content: flex-end;
   align-items: flex-end;
 
   .message-row__info {
     flex-direction: row-reverse;
-    // padding-right: 10px;
   }
 
   .info__picture {
@@ -116,7 +106,6 @@
 
   .message {
     background-color: rgb(0, 0, 255);
-    // margin-right: 10px;
   }
 
   .message__time {
@@ -130,12 +119,9 @@
 }
 
 .message-row--friend {
-  // flex-direction: row-reverse;
-  // justify-content: flex-end;
   align-items: flex-start;
 
   .message-row__info {
-    // padding-left: 10px;
   }
 
   .info__picture {
@@ -144,7 +130,6 @@
 
   .message {
     background-color: rgb(128, 128, 128);
-    // margin-left: 10px;
   }
 
   .message__time {
@@ -175,11 +160,9 @@
 
 .footer__message-input {
   flex-grow: 1;
-  //   border-radius: 5px;
 }
 
 .footer__send-button {
-  //   border-radius: 5px;
 }
 
 .chatroom__no-friend {
@@ -189,6 +172,4 @@
   color: $dark-blue;
   font-size: 18px;
   font-weight: bold;
-  // height: 100%;
-  // text-align: center;
 }

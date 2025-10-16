@@ -24,17 +24,15 @@
 
 .friends__friend {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 8px;
-  // border: 1px solid $dark-blue;
+  flex-grow: 1;
   border-radius: 5px;
   background-color: $white;
-  // color: $white;
-  // font-family: "Midfiender";
 
   padding: 5px 10px;
   cursor: pointer;
-  // transform-origin: center;
   transition: transform 0.3s ease;
 
   &:hover {
@@ -43,10 +41,7 @@
 }
 
 .friends__friend--active {
-  // transform: scale(1.1);
   background-color: white;
-  // box-shadow: $yellow 0px 54px 55px, $yellow 0px -12px 30px, $yellow 0px 4px 6px,
-  //   $yellow 0px 12px 13px, $yellow 0px -3px 5px;
 
   box-shadow: $yellow 0px 0px 5px 2px;
 }

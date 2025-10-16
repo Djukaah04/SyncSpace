@@ -32,6 +32,13 @@
   }
 }
 
+.header__user-name {
+  font-family: $ink-free;
+  font-size: 25px;
+  color: $white;
+  margin: 0 10px;
+}
+
 .header__profile-logo {
   position: relative;
   display: flex;

@@ -1,14 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ChatBox from "../chat-box/ChatBox";
 import { collection, onSnapshot } from "firebase/firestore";
 import UserInfo from "../../../models/UserInfo";
 import { setUsers } from "../../../store/features/usersSlice";
-import { AppDispatch } from "../../../store";
-import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../../store";
+import { useDispatch, useSelector } from "react-redux";
 import { db } from "../../../config/firebase";
+import WallType from "../../../enums/WallType";
 
 const TeamWall = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
+
+  const [teamToShow, setTeamToShow] = useState(WallType.TEAM);
+
+  const chooseWall = (wallType: WallType) => {
+    setTeamToShow(wallType);
+  };
 
   useEffect(() => {
     const usersRef = collection(db, "users");
@@ -28,8 +36,26 @@ const TeamWall = () => {
   }, [dispatch]);
   return (
     <div className="team-wall">
-      <h1>Team Wall</h1>
-      <ChatBox roomId="team-wall" friendName={undefined} />
+      <div className="team-wall__options">
+        <div
+          className="team-wall__option"
+          onClick={() => chooseWall(WallType.TEAM)}
+        >
+          Team {user?.team}
+        </div>
+        <div
+          className="team-wall__option"
+          onClick={() => chooseWall(WallType.COMPANY)}
+        >
+          Company
+        </div>
+      </div>
+
+      {teamToShow === WallType.TEAM ? (
+        <ChatBox roomId={`team-${user?.team}`} friendName={undefined} />
+      ) : (
+        <ChatBox roomId="company" friendName={undefined} />
+      )}
     </div>
   );
 };

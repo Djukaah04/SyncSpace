@@ -9,6 +9,7 @@ import Office from "../../components/office/Office";
 import UserRole from "../../enums/UserRole";
 import { RootState } from "../../store";
 import { useSelector } from "react-redux";
+import UserStatus from "../../enums/UserStatus";
 
 enum NavOption {
   PARKING = "PARKING",
@@ -43,7 +44,16 @@ const Home = () => {
           <span onClick={() => navigateTo()} className="header__title">
             Sync Space
           </span>
+
           <span className="header__profile-logo">
+            <span
+              className={`friend__status ${
+                user?.status === UserStatus.ONLINE
+                  ? "friend__status--online"
+                  : "friend__status--offline"
+              }`}
+            ></span>
+            <span className="header__user-name">{user?.displayName}</span>
             <img
               onClick={goToProfile}
               src="assets/svg/businessman.svg"

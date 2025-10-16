@@ -2,13 +2,11 @@
   position: relative;
   display: flex;
   justify-content: space-between;
-  //   gap: 20px;
   align-items: start;
   background-color: $white;
   border-radius: 15px;
   padding: 20px 30px;
   padding-right: 20px;
-  //   margin: 0 30px;
   cursor: pointer;
 }
 
@@ -55,7 +53,9 @@
 
 .user-card__picture {
   width: 80px;
+  height: 80px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .user-card__user-name {

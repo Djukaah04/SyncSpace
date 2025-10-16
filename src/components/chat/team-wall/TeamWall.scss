@@ -1,0 +1,18 @@
+.team-wall {
+}
+
+.team-wall__options {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.team-wall__option {
+  background-color: white;
+  border-radius: 5px 5px 0 0;
+  padding: 10px;
+  z-index: 6;
+  font-family: $kabel-black;
+  font-size: 15px;
+  cursor: pointer;
+}
