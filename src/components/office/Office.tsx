@@ -5,6 +5,8 @@ import Modal from "../../utils/modal/Modal";
 import type { RootState } from "../../store";
 import UserRole from "../../enums/UserRole";
 import { useSelector } from "react-redux";
+import { sendNotification } from "../../services/notificationsService";
+import NotificationType from "../../enums/NotificationType";
 
 type Seat = {
   id: number;
@@ -15,16 +17,15 @@ type Seat = {
   reservedUntil?: string | null;
 };
 
-const teamSeats = [1, 2, 8]; // your teammates
-// const currentUser = { id: "u1", name: "Djordje" };
-
 const Office: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
+  const users = useSelector((state: RootState) => state.users.list);
 
   const [seats, setSeats] = useState<Seat[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedSeat, setSelectedSeat] = useState<Seat | null>(null);
   const [draggedSeat, setDraggedSeat] = useState<Seat | null>(null);
+  const [chosenDate, setChosenDate] = useState<string>("");
   const isAdmin = user?.role === UserRole.ADMIN;
 
   useEffect(() => {
@@ -56,7 +57,22 @@ const Office: React.FC = () => {
       reservedBy: user?.id,
       reservedUntil: date,
     });
+    // update local state
+    setSeats((prev) => prev.map((s) => (s.id === selectedSeat.id ? { ...s, reserved: true, reservedBy: user?.id, reservedUntil: date } : s)));
+    await notifyReservation(selectedSeat, date);
+    setChosenDate("");
     closeModal();
+  };
+
+  // Send notifications to teammates when a reservation is made
+  const notifyReservation = async (seat: Seat, reservedUntil?: string | null) => {
+    if (!user) return;
+    // notify team members excluding self
+    const teammates = users.filter((u) => u.team === user.team && u.id !== user.id);
+    const message = `${user.displayName} reserved seat ${seat.id}${reservedUntil ? ` until ${reservedUntil}` : ""}`;
+    teammates.forEach((tm) => {
+      sendNotification(NotificationType.GENERAL, message, tm);
+    });
   };
 
   const startDrag = (seat: Seat) => {
@@ -84,10 +100,50 @@ const Office: React.FC = () => {
     await updateDoc(draggedRef, targetData);
     await updateDoc(targetRef, draggedData);
 
+    // update local state to reflect swap
+    setSeats((prev) =>
+      prev.map((s) => {
+        if (s.id === draggedSeat.id) return { ...s, ...targetData } as Seat;
+        if (s.id === target.id) return { ...s, ...draggedData } as Seat;
+        return s;
+      })
+    );
+
+    // Notify users affected by the swap (if any)
+    try {
+      const newDragged = { ...draggedSeat, ...targetData } as Seat;
+      const newTarget = { ...target, ...draggedData } as Seat;
+
+      // If someone got a seat reserved (reservedBy set), notify that user
+      if (newDragged.reserved && newDragged.reservedBy) {
+        const receiver = users.find((u) => u.id === newDragged.reservedBy);
+        if (receiver) sendNotification(NotificationType.GENERAL, `Your seat was moved to ${newDragged.id}`, receiver);
+      }
+      if (newTarget.reserved && newTarget.reservedBy) {
+        const receiver = users.find((u) => u.id === newTarget.reservedBy);
+        if (receiver) sendNotification(NotificationType.GENERAL, `Your seat was moved to ${newTarget.id}`, receiver);
+      }
+    } catch (err) {
+      console.error("Error sending swap notifications", err);
+    }
+
     setDraggedSeat(null);
   };
 
   const recommendSeat = (): Seat | null => {
+    // Recommend seat based on proximity to your teammates who already have seats.
+    const myTeam = user?.team;
+    if (!myTeam) return null;
+
+    // Find seats occupied by teammates (exclude current user)
+    const teammateSeats = seats.filter((s) =>
+      s.reservedBy
+        ? !!users.find((u) => u.id === s.reservedBy && u.team === myTeam && u.id !== user?.id)
+        : false
+    );
+
+    if (teammateSeats.length === 0) return null;
+
     let bestSeat: Seat | null = null;
     let bestDist = Infinity;
 
@@ -95,16 +151,13 @@ const Office: React.FC = () => {
       if (seat.reserved) return;
       let totalDist = 0;
 
-      teamSeats.forEach((teamSeatId) => {
-        const teammate = seats.find((s) => s.id === teamSeatId);
-        if (teammate) {
-          const dx = seat.x - teammate.x;
-          const dy = seat.y - teammate.y;
-          totalDist += Math.sqrt(dx * dx + dy * dy);
-        }
+      teammateSeats.forEach((teammate) => {
+        const dx = seat.x - teammate.x;
+        const dy = seat.y - teammate.y;
+        totalDist += Math.sqrt(dx * dx + dy * dy);
       });
 
-      const avgDist = totalDist / teamSeats.length;
+      const avgDist = totalDist / teammateSeats.length;
       if (avgDist < bestDist) {
         bestDist = avgDist;
         bestSeat = seat;
@@ -123,7 +176,6 @@ const Office: React.FC = () => {
     (a, b) => a - b
   );
 
-  const rowCount = Math.max(1, xVals.length || 4);
   const colCount = Math.max(1, yVals.length || 4);
 
   const xIndexMap = new Map<number, number>();
@@ -161,17 +213,19 @@ const Office: React.FC = () => {
 
       <div className="office-layout" style={gridStyle}>
         {seats.map((seat) => {
-          const isTeamMate = teamSeats.includes(seat.id);
           const isSelected = selectedSeat?.id === seat.id;
 
           const gridRow = xIndexMap.get(seat.x) ?? 1;
           const gridCol = yIndexMap.get(seat.y) ?? 1;
 
+          const reservedByMe = seat.reservedBy === user?.id;
+          const reservedByTeammate = !!seat.reservedBy && !!users.find((u) => u.id === seat.reservedBy && u.team === user?.team && u.id !== user?.id);
+
           return (
             <div
               key={`seat-${seat.id}`}
               className={`seat ${seat.reserved ? "reserved" : ""} ${
-                isTeamMate ? "teammate" : ""
+                reservedByTeammate ? "teammate" : ""
               } ${isSelected ? "selected" : ""}`}
               style={{
                 gridColumn: `${gridCol}`,
@@ -187,7 +241,7 @@ const Office: React.FC = () => {
               aria-disabled={seat.reserved}
             >
               <span className="seat-label">{seat.id}</span>
-              {isTeamMate && (
+              {reservedByMe && (
                 <div className="teammate-indicator">
                   <span className="teammate-indicator__star">★</span>
                 </div>
@@ -203,8 +257,30 @@ const Office: React.FC = () => {
             {selectedSeat.reserved ? (
               <>
                 <h3>Seat {selectedSeat.id} is taken</h3>
-                <p>Booked by: {selectedSeat.reservedBy}</p>
-                <p>Until: {selectedSeat.reservedUntil}</p>
+                {selectedSeat.reservedBy ? (
+                  (() => {
+                    const reserver = users.find((u) => u.id === selectedSeat.reservedBy);
+                    return reserver ? (
+                      <>
+                        <div className="reserver-info">
+                          <img src={reserver.photoUrl || "assets/svg/businessman.svg"} alt="avatar" style={{ width: 48, height: 48, borderRadius: 24 }} />
+                          <div>
+                            <strong>{reserver.displayName}</strong>
+                            <div>{reserver.team}</div>
+                          </div>
+                        </div>
+                        <p>Until: {selectedSeat.reservedUntil}</p>
+                      </>
+                    ) : (
+                      <>
+                        <p>Booked by: {selectedSeat.reservedBy}</p>
+                        <p>Until: {selectedSeat.reservedUntil}</p>
+                      </>
+                    );
+                  })()
+                ) : (
+                  <p>Seat is reserved</p>
+                )}
               </>
             ) : (
               <>
@@ -218,15 +294,19 @@ const Office: React.FC = () => {
                   Pick date (max 7 days):
                   <input
                     type="date"
+                    value={chosenDate}
                     min={new Date().toISOString().split("T")[0]}
                     max={
                       new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
                         .toISOString()
                         .split("T")[0]
                     }
-                    onChange={(e) => handleReserve(e.target.value)}
+                    onChange={(e) => setChosenDate(e.target.value)}
                   />
                 </label>
+                <div className="modal-actions">
+                  <button disabled={!chosenDate} onClick={() => handleReserve(chosenDate)}>Confirm reservation</button>
+                </div>
               </>
             )}
           </div>
