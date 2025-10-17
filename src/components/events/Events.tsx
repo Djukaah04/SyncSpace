@@ -1,25 +1,29 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Map, MapMouseEvent, Marker, Popup } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import {
-  serverTimestamp,
   addDoc,
   collection,
   deleteDoc,
   doc,
   onSnapshot,
   query,
+  serverTimestamp,
 } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import EventInfo from "../../models/EventInfo";
-import MarkerType from "../../enums/MarkerType";
 import { db } from "../../config/firebase";
 import Modal from "../../utils/modal/Modal";
 import UserRole from "../../enums/UserRole";
+import UserInfo from "../../models/UserInfo";
+import EventType from "../../enums/EventType";
+import NotificationType from "../../enums/NotificationType";
+import { sendNotification } from "../../services/notificationsService";
 
 const Events = () => {
   const user = useSelector((state: RootState) => state.auth.user);
+  const isAdmin = user?.role === UserRole.ADMIN;
 
   const [location, setLocation] = useState({
     lat: 43.3094656,
@@ -31,13 +35,16 @@ const Events = () => {
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
   const [mapVisible, setMapVisible] = useState(false);
 
+  const [isCompanyEvent, setIsCompanyEvent] = useState(false);
+
   const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
-  const [selectedType, setSelectedType] = useState<MarkerType>(
-    MarkerType.EVENT
+  const [selectedType, setSelectedType] = useState<EventType>(
+    EventType.GATHERING
   );
   const [eventDate, setEventDate] = useState<string>("");
-  const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
+  const [invitedUsers, setInvitedUsers] = useState<UserInfo[]>([]);
+  const enableSubmit = invitedUsers.length === 0;
 
   const [pendingLocation, setPendingLocation] = useState<{
     lat: number;
@@ -108,35 +115,66 @@ const Events = () => {
   };
 
   const toggleInvite = (userId: string) => {
-    setInvitedUsers((prev) =>
-      prev.includes(userId)
-        ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
-    );
+    setInvitedUsers((invitees: UserInfo[]) => {
+      const exists = invitees.some((invitee) => invitee.id === userId);
+
+      if (exists) {
+        return invitees.filter((inv) => inv.id !== userId);
+      } else {
+        const newUser = users.find((u) => u.id === userId);
+        if (!newUser) return invitees;
+
+        return [...invitees, newUser];
+      }
+    });
   };
 
   const inviteTeam = () => {
-    const team = users.filter((u) => u.team === user?.team);
-    setInvitedUsers(team.map((member) => member.id));
+    setIsCompanyEvent(false);
+    const team = users.filter(
+      (u) => u.team === user?.team && u.id !== user?.id
+    );
+    setInvitedUsers([...team]);
   };
 
-  const inviteCompany = () => {
-    setInvitedUsers(users.filter((u) => u.id !== user?.id).map((u) => u.id));
+  const toggleIsCompanyEvent = () => {
+    // setInvitedUsers(users.filter((u) => u.id !== user?.id).map((u) => u.id));
+    if (isCompanyEvent) {
+      setInvitedUsers([]);
+    } else {
+      setInvitedUsers(users.filter((u) => u.id !== user?.id));
+    }
+    setIsCompanyEvent((prev) => !prev);
   };
 
+  const clear = () => {
+    setIsCompanyEvent(false);
+    setInvitedUsers([]);
+  };
+
+  const delegateNotifications = async () => {
+    invitedUsers.forEach((invitee: UserInfo) => {
+      const message = `${user?.displayName} has made a${
+        selectedType === EventType.ANNOUNCEMENT ? "n" : ""
+      } ${selectedType.toLowerCase()}. ${
+        eventDate ? `Scheduled for ${eventDate}.` : ""
+      }`;
+      console.log("%c message", "color: orange; font-size: 25px", message);
+      console.log("%c invitee", "color: orange; font-size: 25px", invitee);
+      sendNotification(NotificationType.EVENT, message, invitee);
+    });
+  };
   const addEvent = async () => {
     if (!user) {
       setError("Please fill in required fields.");
       return;
     }
-
     let eventDateMs: number | null = null;
     if (eventDate) {
       const d = new Date(eventDate);
       if (isNaN(d.getTime())) return setError("Invalid date");
       eventDateMs = d.getTime();
     }
-
     const newMarkerPartial = {
       lat: eventLocation && eventLocation.lat,
       lon: eventLocation && eventLocation.lon,
@@ -149,19 +187,19 @@ const Events = () => {
       invited: invitedUsers,
       eventDate: eventDateMs,
     };
-
     try {
       const eventsCol = collection(db, "events");
       const docRef = await addDoc(eventsCol, newMarkerPartial);
-
       // setMarkers((prev) => [...prev, localMarker]);
       setError(null);
       setTitle("");
       setComment("");
-      setSelectedType(MarkerType.EVENT);
+      setSelectedType(EventType.GATHERING);
       setEventDate("");
       setInvitedUsers([]);
       setEventLocation(null);
+
+      delegateNotifications();
     } catch (err) {
       console.error("Failed to save event", err);
       setError("Failed to save event");
@@ -374,16 +412,14 @@ const Events = () => {
                 Type
                 <select
                   value={selectedType}
-                  onChange={(e) =>
-                    setSelectedType(e.target.value as MarkerType)
-                  }
+                  onChange={(e) => setSelectedType(e.target.value as EventType)}
                 >
-                  <option value={MarkerType.EVENT}>Event</option>
-                  <option value={MarkerType.MEETING}>Meeting</option>
-                  <option value={MarkerType.ANNOUNCEMENT}>Announcement</option>
-                  <option value={MarkerType.MAINTENANCE}>Maintenance</option>
-                  <option value={MarkerType.WARNING}>Warning</option>
-                  <option value={MarkerType.REMINDER}>Reminder</option>
+                  <option value={EventType.GATHERING}>Gathering</option>
+                  <option value={EventType.MEETING}>Meeting</option>
+                  <option value={EventType.ANNOUNCEMENT}>Announcement</option>
+                  <option value={EventType.MAINTENANCE}>Maintenance</option>
+                  <option value={EventType.WARNING}>Warning</option>
+                  <option value={EventType.REMINDER}>Reminder</option>
                 </select>
               </label>
 
@@ -397,7 +433,7 @@ const Events = () => {
               </label>
 
               <div className="invite-section">
-                <strong>Invite people</strong>
+                <h3 className="invite-section__title">Invite people</h3>
                 <div className="invite-people__invite-options">
                   <button
                     className="invite-options__button invite-options__button--team"
@@ -406,11 +442,13 @@ const Events = () => {
                   >
                     TEAM {user?.team}
                   </button>
-                  {user?.role === UserRole.ADMIN && (
+                  {isAdmin && (
                     <button
-                      className="invite-options__button invite-options__button--team"
+                      className={`invite-options__button invite-options__button--team ${
+                        isCompanyEvent ? "is-selected" : ""
+                      }`}
                       type="button"
-                      onClick={inviteCompany}
+                      onClick={toggleIsCompanyEvent}
                     >
                       COMPANY
                     </button>
@@ -418,35 +456,38 @@ const Events = () => {
                   <button
                     className="invite-options__button"
                     type="button"
-                    onClick={() => setInvitedUsers([])}
+                    onClick={clear}
                   >
                     Clear
                   </button>
                 </div>
 
                 {users.length === 0 && <div>Loading users...</div>}
-                {users.map((u) => {
-                  const checked = invitedUsers.includes(u.id);
-                  return (
-                    <label key={u.id} className="invited-people__list-item">
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => toggleInvite(u.id)}
-                        disabled={u.id === user?.id}
-                      />
-                      <img
-                        src={u.photoUrl || "assets/svg/businessman.svg"}
-                        alt="avatar"
-                        className="invite-avatar"
-                      />
+                {!isCompanyEvent &&
+                  users.map((u) => {
+                    const checked = invitedUsers.some(
+                      (invitee) => invitee.id === u.id
+                    );
+                    return (
+                      <label key={u.id} className="invited-people__list-item">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleInvite(u.id)}
+                          disabled={u.id === user?.id || isCompanyEvent}
+                        />
+                        <img
+                          src={u.photoUrl || "assets/svg/businessman.svg"}
+                          alt="avatar"
+                          className="invite-avatar"
+                        />
 
-                      <span className="invite-name">
-                        {u.id === user?.id ? "Me" : u.displayName || u.email}
-                      </span>
-                    </label>
-                  );
-                })}
+                        <span className="invite-name">
+                          {u.id === user?.id ? "Me" : u.displayName || u.email}
+                        </span>
+                      </label>
+                    );
+                  })}
               </div>
 
               <label>
@@ -468,7 +509,9 @@ const Events = () => {
               {error && <div className="error-text">{error}</div>}
 
               <div className="popup-actions">
-                <button onClick={addEvent}>Save event</button>
+                <button disabled={enableSubmit} onClick={addEvent}>
+                  Save event
+                </button>
               </div>
             </div>
           )}

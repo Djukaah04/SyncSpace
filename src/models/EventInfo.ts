@@ -1,5 +1,5 @@
 import { FieldValue } from "firebase/firestore";
-import MarkerType from "../enums/MarkerType";
+import EventType from "../enums/EventType";
 
 interface EventInfo {
   id: string;
@@ -7,13 +7,13 @@ interface EventInfo {
   lon: number;
   title: string;
   comment: string;
-  type: MarkerType;
+  type: EventType;
   createdAt: FieldValue | number;
   likes: [];
   authorId: string;
   // new:
-  invited?: string[]; // list of user IDs
-  eventDate?: number | null; // milliseconds since epoch
+  invited?: string[];
+  eventDate?: number | null;
 }
 
 export default EventInfo;

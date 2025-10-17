@@ -1,5 +1,5 @@
-enum MarkerType {
-  EVENT = "EVENT",
+enum EventType {
+  GATHERING = "GATHERING",
   MEETING = "MEETING",
   ANNOUNCEMENT = "ANNOUNCEMENT",
   MAINTENANCE = "MAINTENANCE",
@@ -7,4 +7,4 @@ enum MarkerType {
   WARNING = "WARNING",
 }
 
-export default MarkerType;
+export default EventType;

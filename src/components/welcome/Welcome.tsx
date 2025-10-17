@@ -30,7 +30,7 @@ const Welcome = () => {
 
   return (
     <div className="welcome">
-      <span className="blue-side" />
+      <span className="welcome__card-side" />
       <div className="welcome__user-info">
         <h1 className="user-info__welcome-title">
           Welcome back, {user?.displayName}
