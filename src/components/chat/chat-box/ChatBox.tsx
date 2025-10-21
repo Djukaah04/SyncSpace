@@ -175,7 +175,15 @@ const ChatBox = ({ roomId, friendName }: RoomProps) => {
   }, [dispatch, roomId]);
 
   return (
-    <div className="chat">
+    <div
+      className={`chat ${
+        roomId === "company"
+          ? "chat--company"
+          : roomId?.includes("team")
+          ? "chat--team"
+          : ""
+      }`}
+    >
       <div ref={messagesEndRef} className="messages">
         {messages.map((message, index) => (
           <div

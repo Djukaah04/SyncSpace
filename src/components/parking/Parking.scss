@@ -3,17 +3,17 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
   padding: 20px 0;
   border-radius: 10px;
   flex-wrap: wrap;
-  row-gap: 30px;
+  row-gap: 90px;
 }
 
 .parking-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  border-right: 2px dashed rgba(128, 128, 128, 0.6);
 }
 
 .parking__admin-buttons {

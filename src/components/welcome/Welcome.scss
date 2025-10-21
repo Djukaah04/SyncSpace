@@ -5,6 +5,8 @@
   align-items: start;
   background-color: $white;
   border-radius: 15px;
+  box-shadow: rgba(31, 57, 89, 0.5) 0px 0px 20px 2px;
+  margin-top: 10px;
   padding: 20px 30px;
   padding-right: 20px;
   cursor: pointer;
@@ -34,20 +36,24 @@
 }
 
 .welcome__user-card {
+  width: 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid transparent;
   border-radius: 15px;
   padding: 15px;
-  //   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  transition: transform 0.2s ease;
+
+  background: #1f3959;
+  background: linear-gradient(
+    180deg,
+    rgba(31, 57, 89, 0.72) 0%,
+    rgba(255, 255, 255, 1) 100%
+  );
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
-  &.is-admin {
-    background-color: $gold;
-  }
-
   &:hover {
+    transform: scale(1.03);
   }
 }
 

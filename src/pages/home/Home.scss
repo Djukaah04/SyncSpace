@@ -72,28 +72,40 @@
 .home__nav {
   display: flex;
   justify-content: space-between;
-  padding: 20px 20px;
-  margin: 0 30px;
+  width: 100%;
+  margin: 0;
   background-color: $grey;
 }
 
 .home__nav-item {
+  flex-grow: 1;
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 5px;
   padding: 10px;
-  border-radius: 10px;
-  background-color: $white;
+  background-color: $grey;
   cursor: pointer;
 
+  transition: background 0.2s ease;
+
+  &:hover {
+    // transform: scale(1.1);
+  }
+
+  &:hover.home__nav-item--active {
+    // transform: translateY(0);
+  }
+
   &:hover:not(.home__nav-item--active) {
-    background-color: lightgray;
+    background: lightgray;
   }
 }
 
 .home__nav-item--active {
   background-color: $dark-blue;
   color: $white;
+  transition: transform 0.2s ease;
 }
 
 .nav-item__icon {

@@ -2,17 +2,62 @@
 }
 
 .team-wall__options {
+  position: relative;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 26px;
 }
 
 .team-wall__option {
+  flex-grow: 1;
+  text-align: center;
+  border: 2px solid $dark-blue;
+  border-bottom: none;
   background-color: white;
   border-radius: 5px 5px 0 0;
   padding: 10px;
+  text-transform: uppercase;
   z-index: 6;
   font-family: $kabel-black;
-  font-size: 15px;
+  font-weight: 900;
   cursor: pointer;
+
+  transition: all 0.2s ease;
+
+  &:hover {
+    filter: brightness(1.05);
+    transform: translateY(-6px);
+  }
+}
+
+.team-wall__option--team {
+}
+
+.team-wall__option--company {
+}
+
+.team-wall__option--selected {
+  transform: translateY(-6px);
+  background: #fff;
+  background: linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0) 1%,
+    rgba(255, 221, 51, 1) 100%
+  );
+}
+
+.team-wall__option-separator-container {
+  position: absolute;
+  top: 20px;
+  left: calc(50% - 20px);
+  z-index: 6;
+}
+
+.team-wall__option-separator {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 0 0 5px 5px;
+  border: 2px solid $dark-blue;
+  border-top: none;
 }

@@ -169,7 +169,7 @@ const Profile = () => {
 
   return (
     <main className="profile">
-      <nav className="profile__nav">
+      <nav className={`profile__nav `}>
         <span className="nav__back">
           <img onClick={back} src="assets/svg/back.svg" alt="back" />
         </span>
@@ -180,7 +180,9 @@ const Profile = () => {
         <div className="profile__info-and-notifications">
           <div className="profile__info">
             {user?.photoUrl && (
-              <>
+              <div
+                className={`profile__picture-row is-${user?.role?.toLowerCase()}`}
+              >
                 <span className="profile__picture-container">
                   <img
                     className="picture-container__picture"
@@ -209,208 +211,219 @@ const Profile = () => {
                     />
                   </button>
                 </span>
-              </>
-            )}
-            <div className="info-item">
-              <span className="info-item__label">Display name:</span>
-              {editDisplayName ? (
-                <div className="info-item__edit-container">
-                  <input
-                    type="text"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    autoFocus
-                    style={{
-                      padding: 4,
-                      borderRadius: 6,
-                      border: "1px solid #ccc",
-                      fontSize: 14,
-                    }}
-                  />
-                  <button onClick={saveDisplayName}>Save</button>
-                </div>
-              ) : (
-                <>
-                  <div className="info-item__value">
-                    <p className="info-item__value-text">
-                      {user?.displayName || (
-                        <span style={{ color: "#aaa" }}>No name</span>
-                      )}
-                    </p>
-                    <span
-                      className="info-item__value-edit"
-                      onClick={openEditDisplayName}
-                      title="Edit"
-                    >
-                      <img
-                        src="assets/svg/edit.svg"
-                        alt="edit"
-                        style={{ width: 16 }}
-                      />
-                    </span>
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="info-item">
-              <span className="info-item__label">Status:</span>
-              {editStatus ? (
-                <div className="info-item__edit-container">
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    autoFocus
-                    style={{
-                      padding: 4,
-                      borderRadius: 6,
-                      border: "1px solid #ccc",
-                      fontSize: 14,
-                    }}
-                  >
-                    <option value="ACTIVE">ACTIVE</option>
-                    <option value="INACTIVE">INACTIVE</option>
-                    <option value="AWAY">AWAY</option>
-                  </select>
-                  <button onClick={saveStatus}>Save</button>
-                </div>
-              ) : (
-                <>
-                  <div className="info-item__value">
-                    <p className="info-item__value-text">
-                      {user?.status || (
-                        <span style={{ color: "#aaa" }}>No status</span>
-                      )}
-                    </p>
-                    <span
-                      className="info-item__value-edit"
-                      onClick={openEditStatus}
-                      title="Edit"
-                    >
-                      <img
-                        src="assets/svg/edit.svg"
-                        alt="edit"
-                        style={{ width: 16 }}
-                      />
-                    </span>
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="info-item">
-              <span className="info-item__label">Team:</span>
-              <div className="info-item__value">
-                <p className="info-item__value-text">
-                  {user?.team || <span style={{ color: "#aaa" }}>No name</span>}
-                </p>
-              </div>
-            </div>
-
-            {user?.email && (
-              <div
-                onClick={() => {
-                  console.log(
-                    "%c carPlateError",
-                    "color: orange; font-size: 25px",
-                    carPlateError
-                  );
-                  console.log(
-                    "%c user?.carPlate",
-                    "color: orange; font-size: 25px",
-                    user?.carPlate
-                  );
-                }}
-                className="info-item"
-              >
-                <span className="info-item__label">Email:</span>
-                <div className="info-item__value">{user.email}</div>
               </div>
             )}
-            <div className="info-item">
-              <span
-                className={`info-item__label ${
-                  carPlateError ? "info-item__label--error" : ""
-                }`}
-              >
-                Car plate:
-              </span>
-              {editCarPlate ? (
-                <>
+            <div className="info-items">
+              <div className="info-item">
+                <span className="info-item__label">Display name:</span>
+                {editDisplayName ? (
                   <div className="info-item__edit-container">
                     <input
                       type="text"
-                      value={carPlate}
-                      onChange={(e) => setCarPlate(e.target.value)}
-                      placeholder="Enter car plate"
-                      className="license-plate-input"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
                       autoFocus
+                      style={{
+                        padding: 4,
+                        borderRadius: 6,
+                        border: "1px solid #ccc",
+                        fontSize: 14,
+                      }}
                     />
-                    <button onClick={saveCarPlate}>Save</button>
+                    <button onClick={saveDisplayName}>Save</button>
                   </div>
-                </>
-              ) : (
-                <>
-                  <div className="info-item__value">
-                    <p className="info-item__value-text">
-                      {user?.carPlate ? (
-                        user.carPlate
-                      ) : (
-                        <span className="no-plate-added">no plate added</span>
-                      )}
-                    </p>
+                ) : (
+                  <>
+                    <div className="info-item__value">
+                      <p className="info-item__value-text">
+                        {user?.displayName || (
+                          <span style={{ color: "#aaa" }}>No name</span>
+                        )}
+                      </p>
+                      <span
+                        className="info-item__value-edit"
+                        onClick={openEditDisplayName}
+                        title="Edit"
+                      >
+                        <img
+                          src="assets/svg/edit.svg"
+                          alt="edit"
+                          style={{ width: 16 }}
+                        />
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
 
-                    <span
-                      className="info-item__value-edit"
-                      onClick={openEditCarPlate}
-                      title="Edit"
+              <div className="info-item">
+                <span className="info-item__label">Status:</span>
+                {editStatus ? (
+                  <div className="info-item__edit-container">
+                    <select
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value)}
+                      autoFocus
+                      style={{
+                        padding: 4,
+                        borderRadius: 6,
+                        border: "1px solid #ccc",
+                        fontSize: 14,
+                      }}
                     >
-                      <img
-                        src="assets/svg/edit.svg"
-                        alt="edit"
-                        className="info-item__value-edit-img"
-                      />
-                    </span>
+                      <option value="ACTIVE">ACTIVE</option>
+                      <option value="INACTIVE">INACTIVE</option>
+                      <option value="AWAY">AWAY</option>
+                    </select>
+                    <button onClick={saveStatus}>Save</button>
                   </div>
-                </>
-              )}
+                ) : (
+                  <>
+                    <div className="info-item__value">
+                      <p className="info-item__value-text">
+                        {user?.status || (
+                          <span style={{ color: "#aaa" }}>No status</span>
+                        )}
+                      </p>
+                      <span
+                        className="info-item__value-edit"
+                        onClick={openEditStatus}
+                        title="Edit"
+                      >
+                        <img
+                          src="assets/svg/edit.svg"
+                          alt="edit"
+                          style={{ width: 16 }}
+                        />
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
 
-              {(carPlateError ||
-                (carSelectIsOpen && user?.carPlate === "")) && (
-                <span className="car-plate-error">{carPlateError}</span>
-              )}
-            </div>
-            <div className="info-item info-item--car">
-              <span className="info-item__label info-item__label--car">
-                Car:
-              </span>
-              {user?.carUrl ? (
-                <>
-                  <img
-                    src={user.carUrl}
-                    className="profile__car"
-                    alt="selected-car"
-                    draggable="false"
-                  />
-                  <img
-                    className="profile__trash"
-                    src="assets/svg/trash.svg"
-                    alt="trash"
-                    onClick={removeCar}
-                  />
-                </>
-              ) : (
-                <button
-                  className={`btn-primary ${
-                    carSelectIsOpen ? "btn-primary--open" : ""
-                  } profile__car-selection-btn`}
-                  onClick={toggleSelect}
+              <div className="info-item">
+                <span className="info-item__label">Team:</span>
+                <div className="info-item__value">
+                  <p className="info-item__value-text">
+                    {user?.team || (
+                      <span style={{ color: "#aaa" }}>No name</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="info-item">
+                <span className="info-item__label">Role:</span>
+                <div className="info-item__value">
+                  <p className="info-item__value-text">{user?.role}</p>
+                </div>
+              </div>
+
+              {user?.email && (
+                <div
+                  onClick={() => {
+                    console.log(
+                      "%c carPlateError",
+                      "color: orange; font-size: 25px",
+                      carPlateError
+                    );
+                    console.log(
+                      "%c user?.carPlate",
+                      "color: orange; font-size: 25px",
+                      user?.carPlate
+                    );
+                  }}
+                  className="info-item"
                 >
-                  {carSelectIsOpen
-                    ? "Close car selection"
-                    : "Open car selection"}
-                </button>
+                  <span className="info-item__label">Email:</span>
+                  <div className="info-item__value">{user.email}</div>
+                </div>
               )}
+              <div className="info-item">
+                <span
+                  className={`info-item__label ${
+                    carPlateError ? "info-item__label--error" : ""
+                  }`}
+                >
+                  License plate:
+                </span>
+                {editCarPlate ? (
+                  <>
+                    <div className="info-item__edit-container">
+                      <input
+                        type="text"
+                        value={carPlate}
+                        onChange={(e) => setCarPlate(e.target.value)}
+                        placeholder="Enter car plate"
+                        className="license-plate-input"
+                        autoFocus
+                      />
+                      <button onClick={saveCarPlate}>Save</button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="info-item__value">
+                      <p className="info-item__value-text">
+                        {user?.carPlate ? (
+                          user.carPlate
+                        ) : (
+                          <span className="no-plate-added">no plate added</span>
+                        )}
+                      </p>
+
+                      <span
+                        className="info-item__value-edit"
+                        onClick={openEditCarPlate}
+                        title="Edit"
+                      >
+                        <img
+                          src="assets/svg/edit.svg"
+                          alt="edit"
+                          className="info-item__value-edit-img"
+                        />
+                      </span>
+                    </div>
+                  </>
+                )}
+
+                {(carPlateError ||
+                  (carSelectIsOpen && user?.carPlate === "")) && (
+                  <span className="car-plate-error">{carPlateError}</span>
+                )}
+              </div>
+              <div className="info-item info-item--car">
+                <span className="info-item__label info-item__label--car">
+                  Car:
+                </span>
+                {user?.carUrl ? (
+                  <>
+                    <img
+                      src={user.carUrl}
+                      className="profile__car"
+                      alt="selected-car"
+                      draggable="false"
+                    />
+                    <img
+                      className="profile__trash"
+                      src="assets/svg/trash.svg"
+                      alt="trash"
+                      onClick={removeCar}
+                    />
+                  </>
+                ) : (
+                  <button
+                    className={`btn-primary ${
+                      carSelectIsOpen ? "btn-primary--open" : ""
+                    } profile__car-selection-btn`}
+                    onClick={toggleSelect}
+                  >
+                    {carSelectIsOpen
+                      ? "Close car selection"
+                      : "Open car selection"}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
           <NotificationsList />

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import UserInfo from "../../../models/UserInfo";
-import UserStatus from "../../../enums/UserStatus";
 import Room from "./room/Room";
 import { setSelectedFriend } from "../../../store/features/chatSlice";
 
@@ -46,11 +45,7 @@ const ChatRoom = () => {
               >
                 <p className="friend__name">{u.displayName}</p>
                 <div
-                  className={`friend__status ${
-                    u.status === UserStatus.ONLINE
-                      ? "friend__status--online"
-                      : "friend__status--offline"
-                  }`}
+                  className={`friend__status friend__status--${u.status.toLowerCase()}`}
                 ></div>
               </li>
             )

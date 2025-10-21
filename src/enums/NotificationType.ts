@@ -4,6 +4,7 @@ enum NotificationType {
   CAR = "CAR",
   REMINDER = "REMINDER",
   GENERAL = "GENERAL",
+  OFFICE = "OFFICE",
 }
 
 export default NotificationType;

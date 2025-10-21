@@ -3,15 +3,12 @@
   flex-direction: column;
   align-items: center;
   min-height: 100%;
-  padding: 24px;
   box-sizing: border-box;
-  background: #fafafa;
 }
 
 .note {
   font-size: 13px;
   color: #666;
-  margin-bottom: 10px;
 }
 
 /* GRID kontejner - stilovi su statički, kolone/rows se postavljaju inline putem style prop-a */
@@ -19,11 +16,8 @@
   display: grid;
   justify-content: center;
   align-content: center;
-  background: #f5f5f5;
-  border: 2px dashed #ccc;
-  border-radius: 12px;
+
   padding: 18px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
 }
 
 .seat {
@@ -92,16 +86,66 @@
 .reservation-form {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 12px;
+}
+
+.reservation-form__seat-title {
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.reservation-form__taken {
+  font-weight: 500;
+}
+
+.reserver-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reserver-info__info-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-radius: 10px;
+  padding: 5px 10px;
+  background-color: rgba($gold, 0.4);
+  margin-bottom: 10px;
+  font-family: $kabel-black;
+}
+
+.reserver-info__label {
+  margin: 0;
+}
+
+.reserver-info__picture {
+  height: 150px;
+  width: 150px;
+  object-fit: cover;
+  border-radius: 24px;
+  box-shadow: 0px 4px 15px 2px rgba($black, 0.8);
+  margin-bottom: 30px;
 }
 
 .legend {
   display: flex;
   gap: 18px;
   margin-bottom: 12px;
+  padding: 10px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  background: #f5f5f5;
+  border: 2px dashed #ccc;
+  border-radius: 12px;
 }
 
 .legend-item {
@@ -130,5 +174,12 @@
   background: #ffb3b3;
 }
 .legend-box.teammate {
-  background: #ff7070;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: $black;
+  color: $white;
+}
+.legend-box.me {
+  background: $gold;
 }

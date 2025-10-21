@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "../../../utils/modal/Modal";
 import UserInfo from "../../../models/UserInfo";
 import "./ReservationDetailsModal.scss";
+import { formatDatePretty } from "../../../services/formattingService";
 
 interface ReservationDetailsModalProps {
   isOpen: boolean;
@@ -32,7 +33,6 @@ const ReservationDetailsModal: React.FC<ReservationDetailsModalProps> = ({
         </h2>
 
         <div className="reservation-details-modal__content">
-          {/* LEFT - text block */}
           <div className="reservation-details-modal__left">
             {photoUrl && (
               <img
@@ -62,13 +62,12 @@ const ReservationDetailsModal: React.FC<ReservationDetailsModalProps> = ({
                   Reserved until:
                 </span>
                 <span className="reservation-details-modal__value reservation-details-modal__value--highlight">
-                  {reservationEnd.toLocaleString()}
+                  {formatDatePretty(reservationEnd)}
                 </span>
               </div>
             )}
           </div>
 
-          {/* RIGHT - car block */}
           {carUrl && (
             <div className="reservation-details-modal__right">
               <img

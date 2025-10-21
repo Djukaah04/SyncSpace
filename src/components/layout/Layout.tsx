@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   return (
-    <main className="home__content">
+    <main className="layout">
       <Outlet></Outlet>
     </main>
   );

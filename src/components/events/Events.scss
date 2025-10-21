@@ -1,6 +1,4 @@
 .events {
-  margin: 1.5rem auto;
-  max-width: 900px;
   padding: 1rem;
   background: $grey-blue;
   border-radius: 12px;
@@ -139,28 +137,89 @@
 }
 
 .create-event {
-  min-width: 300px;
+  min-width: 350px;
+  height: fit-content;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  justify-content: flex-start;
+  align-items: flex-start;
   max-width: 250px;
-  // background-color: $grey-blue;
   background-color: $white;
   border-radius: 12px;
   padding: 20px;
-  align-items: flex-start;
+
   box-shadow: 0 2px 8px rgba($black, 0.15);
 }
 
-.location-controls {
+.create-event__field-container {
+  width: 100%;
   display: flex;
-  gap: 8px;
+  justify-content: flex-start;
   align-items: center;
-  margin-top: 5px;
+  gap: 10px;
+  margin: 10px 0;
+
+  &--comment {
+    flex-direction: column;
+    align-items: start;
+
+    textarea {
+      width: 100%;
+    }
+  }
+
+  input,
+  textarea,
+  select {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    border: none;
+    border-bottom: 1px solid grey;
+    outline: none;
+  }
+
+  select {
+    flex-grow: 1;
+    border: none;
+    border-bottom: 1px solid grey;
+    appearance: none;
+
+    cursor: pointer;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+  }
+}
+
+.field-container__label-row {
+  width: 40%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.create-event__optional {
+  font-size: 12px;
+  color: #888888;
+  font-style: italic;
+}
+
+.location-field-row {
+  display: flex;
+  gap: 10px;
+}
+
+.location-controls {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
 }
 
 .invite-section {
   margin-top: 6px;
+  width: 100%;
 }
 
 .invite-section__title {
@@ -171,8 +230,8 @@
 
 .invite-people__invite-options {
   display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  margin-bottom: 15px;
 }
 
 .invite-options__button {
@@ -185,25 +244,88 @@
   cursor: pointer;
   transition: all 0.2s ease;
 
-  &.is-selected {
-    background-color: lightgreen;
-  }
-
   &:hover {
     filter: brightness(1.05);
     transform: translateY(-3px);
   }
-  &--team:hover {
-    // background: darken($light-green, 8%);
+  &--team {
+    background-color: rgba(lightblue, 1);
+  }
+
+  &--company {
+    background-color: $gold;
+  }
+
+  &--clear {
+    background-color: rgba(red, 0.4);
+  }
+
+  &.is-selected {
+    filter: brightness(1.05);
+    transform: translateY(-5px);
+    background-color: orange;
   }
 }
 
+.invited-people__list {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .invited-people__list-item {
+  width: 48%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 0;
+  gap: 10px;
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background-color: transparent;
+  transition: all 0.2s ease;
   cursor: pointer;
+
+  &:hover {
+    background-color: rgba(#4caf50, 0.2);
+  }
+
+  input[type="checkbox"] {
+    accent-color: #4caf50;
+    cursor: pointer;
+  }
+
+  &:has(input[type="checkbox"]:checked) {
+    border-color: #4caf50;
+    background-color: #eafbea;
+
+    &:hover {
+      background-color: #dff7df;
+    }
+  }
+
+  img.invite-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .invite-name {
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.invited-people__list-item--me {
+  &:hover {
+    background-color: rgba(red, 0.2);
+    cursor: not-allowed;
+    input {
+      cursor: not-allowed;
+    }
+  }
 }
 
 .invite-avatar {
@@ -223,9 +345,20 @@
 }
 
 .popup-actions {
+  width: 100%;
   margin-top: 8px;
   display: flex;
   justify-content: flex-end;
+
+  button {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: rgba($light-green, 0.9);
+  }
 }
 
 .btn-confirm {

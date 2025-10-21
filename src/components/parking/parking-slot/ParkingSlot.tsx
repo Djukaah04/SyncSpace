@@ -18,6 +18,7 @@ import {
 } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import UserRole from "../../../enums/UserRole";
 
 interface ParkingSlotProps {
   parking: ParkingSlotInfo;
@@ -35,6 +36,8 @@ const ParkingSlot = ({ parking }: ParkingSlotProps) => {
   const [occupyingUser, setOccupyingUser] = useState<UserInfo | undefined>(
     undefined
   );
+
+  const isAdmin = user?.role === UserRole.ADMIN;
 
   const handleSlotClick = async () => {
     if (parking.status === ParkingStatus.FREE) {
@@ -159,7 +162,7 @@ const ParkingSlot = ({ parking }: ParkingSlotProps) => {
           <span className="disabled-label">X</span>
         )}
 
-        {user && (
+        {user && isAdmin && (
           <img
             onClick={openAdminModal}
             className="parking-slot__admin-icon"

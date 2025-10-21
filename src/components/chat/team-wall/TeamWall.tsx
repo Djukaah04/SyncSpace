@@ -30,7 +30,7 @@ const TeamWall = () => {
     });
 
     return () => {
-      console.log("%c ChatRoom UNSUBSCRIBE", "color: red; font-size: 20px");
+      console.log("%c ChatRoom unsubscribe", "color: red; font-size: 20px");
       unsubscribe();
     };
   }, [dispatch]);
@@ -38,17 +38,24 @@ const TeamWall = () => {
     <div className="team-wall">
       <div className="team-wall__options">
         <div
-          className="team-wall__option"
+          className={`team-wall__option team-wall__option--team ${
+            teamToShow === WallType.TEAM ? "team-wall__option--selected" : ""
+          }`}
           onClick={() => chooseWall(WallType.TEAM)}
         >
           Team {user?.team}
         </div>
         <div
-          className="team-wall__option"
+          className={`team-wall__option team-wall__option--company ${
+            teamToShow === WallType.COMPANY ? "team-wall__option--selected" : ""
+          }`}
           onClick={() => chooseWall(WallType.COMPANY)}
         >
           Company
         </div>
+        <span className="team-wall__option-separator-container">
+          <span className="team-wall__option-separator"></span>
+        </span>
       </div>
 
       {teamToShow === WallType.TEAM ? (

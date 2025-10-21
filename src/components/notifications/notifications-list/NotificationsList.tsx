@@ -24,6 +24,7 @@ const typeIcons: Record<NotificationType, string> = {
   [NotificationType.CAR]: "assets/svg/car-general.svg",
   [NotificationType.MESSAGE]: "assets/svg/chat.svg",
   [NotificationType.REMINDER]: "assets/svg/reminder.svg",
+  [NotificationType.OFFICE]: "assets/svg/chair.svg",
 };
 
 const NotificationsList = () => {

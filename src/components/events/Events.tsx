@@ -241,59 +241,7 @@ const Events = () => {
 
         <div className="events__content">
           <div className="event-cards-and-map">
-            <div className="event-cards">
-              {events.map((event) => (
-                <div
-                  className={`event-card event--${event.type.toLowerCase()}`}
-                  key={event.id}
-                >
-                  <div className="event-card__info">
-                    <h4>{event.title || "Untitled"}</h4>
-                    <p>{event.comment}</p>
-                    <small>
-                      Type: {event.type} •{" "}
-                      {event.eventDate
-                        ? new Date(event.eventDate).toLocaleDateString()
-                        : "No date"}
-                    </small>
-                    {user && user.role === UserRole.ADMIN && (
-                      <button
-                        className="btn-remove"
-                        onClick={() => removeMarker(event.id, event.id)}
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </div>
-                  <div className="event-card__invitees">
-                    {event.invited &&
-                      event.invited.length > 0 &&
-                      event.invited.map((userId) => {
-                        const invitedUser = users.find((u) => u.id === userId);
-                        if (!invitedUser) return null;
-                        return (
-                          <div key={userId} className="event-card__invitee">
-                            <img
-                              src={
-                                invitedUser.photoUrl ||
-                                "assets/svg/businessman.svg"
-                              }
-                              alt="avatar"
-                              className="invite-avatar"
-                            />
-                            <span className="invite-name">
-                              {invitedUser.id === user?.id
-                                ? "Me"
-                                : invitedUser.displayName || invitedUser.email}
-                            </span>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-              ))}
-            </div>
-            {mapVisible && (
+            {mapVisible ? (
               <div className="map-container">
                 <div className="map">
                   <Map
@@ -373,6 +321,62 @@ const Events = () => {
                   </Map>
                 </div>
               </div>
+            ) : (
+              <div className="event-cards">
+                {events.map((event) => (
+                  <div
+                    className={`event-card event--${event.type.toLowerCase()}`}
+                    key={event.id}
+                  >
+                    <div className="event-card__info">
+                      <h4>{event.title || "Untitled"}</h4>
+                      <p>{event.comment}</p>
+                      <small>
+                        Type: {event.type} •{" "}
+                        {event.eventDate
+                          ? new Date(event.eventDate).toLocaleDateString()
+                          : "No date"}
+                      </small>
+                      {user && user.role === UserRole.ADMIN && (
+                        <button
+                          className="btn-remove"
+                          onClick={() => removeMarker(event.id, event.id)}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                    <div className="event-card__invitees">
+                      {event.invited &&
+                        event.invited.length > 0 &&
+                        event.invited.map((userId) => {
+                          const invitedUser = users.find(
+                            (u) => u.id === userId
+                          );
+                          if (!invitedUser) return null;
+                          return (
+                            <div key={userId} className="event-card__invitee">
+                              <img
+                                src={
+                                  invitedUser.photoUrl ||
+                                  "assets/svg/businessman.svg"
+                                }
+                                alt="avatar"
+                                className="invite-avatar"
+                              />
+                              <span className="invite-name">
+                                {invitedUser.id === user?.id
+                                  ? "Me"
+                                  : invitedUser.displayName ||
+                                    invitedUser.email}
+                              </span>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
           {createEventVisible && (
@@ -387,10 +391,10 @@ const Events = () => {
                 }}
                 className="create-event__title"
               >
-                📍 Create Event
+                📍 CREATE EVENT
               </h3>
-              <label>
-                Title
+              <label className="create-event__field-container">
+                <div className="field-container__label-row">Title:</div>
                 <input
                   type="text"
                   value={title}
@@ -399,17 +403,8 @@ const Events = () => {
                 />
               </label>
 
-              <label>
-                Comment
-                <textarea
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Details"
-                />
-              </label>
-
-              <label>
-                Type
+              <label className="create-event__field-container">
+                <div className="field-container__label-row">Type:</div>
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value as EventType)}
@@ -423,12 +418,28 @@ const Events = () => {
                 </select>
               </label>
 
-              <label>
-                Date (optional)
+              <label className="create-event__field-container">
+                <div className="field-container__label-row">
+                  Date:{" "}
+                  <span className="create-event__optional">(optional)</span>
+                </div>
                 <input
                   type="date"
                   value={eventDate}
                   onChange={(e) => setEventDate(e.target.value)}
+                />
+              </label>
+
+              <label className="create-event__field-container create-event__field-container--comment">
+                <div className="field-container__label-row">
+                  Comment:{" "}
+                  <span className="create-event__optional">(optional)</span>
+                </div>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  rows={5}
+                  placeholder="Details"
                 />
               </label>
 
@@ -444,7 +455,7 @@ const Events = () => {
                   </button>
                   {isAdmin && (
                     <button
-                      className={`invite-options__button invite-options__button--team ${
+                      className={`invite-options__button invite-options__button--company ${
                         isCompanyEvent ? "is-selected" : ""
                       }`}
                       type="button"
@@ -454,44 +465,59 @@ const Events = () => {
                     </button>
                   )}
                   <button
-                    className="invite-options__button"
+                    className="invite-options__button invite-options__button--clear"
                     type="button"
                     onClick={clear}
                   >
-                    Clear
+                    CLEAR
                   </button>
                 </div>
 
                 {users.length === 0 && <div>Loading users...</div>}
-                {!isCompanyEvent &&
-                  users.map((u) => {
-                    const checked = invitedUsers.some(
-                      (invitee) => invitee.id === u.id
-                    );
-                    return (
-                      <label key={u.id} className="invited-people__list-item">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => toggleInvite(u.id)}
-                          disabled={u.id === user?.id || isCompanyEvent}
-                        />
-                        <img
-                          src={u.photoUrl || "assets/svg/businessman.svg"}
-                          alt="avatar"
-                          className="invite-avatar"
-                        />
+                <div className="invited-people__list">
+                  {!isCompanyEvent &&
+                    users.map((u) => {
+                      const checked = invitedUsers.some(
+                        (invitee) => invitee.id === u.id
+                      );
+                      return (
+                        <label
+                          key={u.id}
+                          className={`invited-people__list-item ${
+                            u.id === user?.id
+                              ? "invited-people__list-item--me"
+                              : ""
+                          }`}
+                        >
+                          <input
+                            className="checkmark"
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleInvite(u.id)}
+                            disabled={u.id === user?.id || isCompanyEvent}
+                          />
+                          <img
+                            src={u.photoUrl || "assets/svg/businessman.svg"}
+                            alt="avatar"
+                            className="invite-avatar"
+                          />
 
-                        <span className="invite-name">
-                          {u.id === user?.id ? "Me" : u.displayName || u.email}
-                        </span>
-                      </label>
-                    );
-                  })}
+                          <span className="invite-name">
+                            {u.id === user?.id
+                              ? "Me"
+                              : u.displayName || u.email}
+                          </span>
+                        </label>
+                      );
+                    })}
+                </div>
               </div>
 
-              <label>
-                Location <button onClick={toggleMap}>Toggle map</button>
+              <label style={{ width: "100%" }}>
+                <div className="location-field-row">
+                  Location
+                  <button onClick={toggleMap}>Toggle map</button>
+                </div>
                 {eventLocation ? (
                   <div className="location-controls">
                     <button onClick={() => flyToEvent(eventLocation)}>
@@ -510,7 +536,7 @@ const Events = () => {
 
               <div className="popup-actions">
                 <button disabled={enableSubmit} onClick={addEvent}>
-                  Save event
+                  SAVE EVENT
                 </button>
               </div>
             </div>

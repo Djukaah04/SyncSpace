@@ -47,11 +47,7 @@ const Home = () => {
 
           <span className="header__profile-logo">
             <span
-              className={`friend__status ${
-                user?.status === UserStatus.ONLINE
-                  ? "friend__status--online"
-                  : "friend__status--offline"
-              }`}
+              className={`friend__status friend__status--${user?.status.toLowerCase()}`}
             ></span>
             <span className="header__user-name">{user?.displayName}</span>
             <img

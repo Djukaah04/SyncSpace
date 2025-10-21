@@ -11,7 +11,7 @@
   display: flex;
   justify-content: flex-end;
   padding: 18px;
-  background-color: $white;
+  margin-bottom: 20px;
 }
 
 .nav__back {
@@ -30,6 +30,13 @@
   &:hover img {
     transform: translateX(-5px);
   }
+}
+
+.profile__picture-row {
+  padding-top: 10px;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  justify-content: center;
 }
 
 .profile__picture-container {
@@ -83,10 +90,10 @@
 }
 
 .profile__info-container {
-  background-color: $white;
   padding: 0 20px;
   text-align: center;
   flex-grow: 1;
+  background-color: white;
 }
 
 .profile__info {
@@ -95,6 +102,11 @@
   max-width: 400px;
   text-align: center;
   min-width: 250px;
+}
+
+.info-items {
+  padding: 20px;
+  padding-top: 0;
 }
 
 .info-item {

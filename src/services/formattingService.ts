@@ -35,3 +35,25 @@ export const formatDateRange = (start: Date, end: Date): string => {
     return `${formatDay(start)} - ${formatDay(end)}`;
   }
 };
+
+export const formatDatePretty = (date: Date): string => {
+  const month = date.toLocaleString("en-US", { month: "long" });
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  const suffix =
+    day % 10 === 1 && day !== 11
+      ? "st"
+      : day % 10 === 2 && day !== 12
+      ? "nd"
+      : day % 10 === 3 && day !== 13
+      ? "rd"
+      : "th";
+
+  const hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const formattedHour = ((hours + 11) % 12) + 1;
+
+  return `${month} ${day}${suffix} ${formattedHour}:${minutes} ${ampm}`;
+};

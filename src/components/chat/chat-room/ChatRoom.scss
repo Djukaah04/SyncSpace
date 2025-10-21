@@ -63,6 +63,10 @@
   background-color: $light-green;
 }
 
+.friend__status--away {
+  background-color: orange;
+}
+
 .friend__status--offline {
   background-color: $grey;
 }

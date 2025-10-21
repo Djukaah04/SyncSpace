@@ -1,7 +1,5 @@
-import React from "react";
 import { RootState } from "../../store";
 import { useSelector } from "react-redux";
-import UserRole from "../../enums/UserRole";
 
 const Welcome = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -41,11 +39,7 @@ const Welcome = () => {
         </p>
         <p className="user-info__info-item">Meeting: IME MITINGA at TIME</p>
       </div>
-      <div
-        className={`welcome__user-card ${
-          user?.role === UserRole.ADMIN ? "is-admin" : ""
-        }`}
-      >
+      <div className={`welcome__user-card is-${user?.role?.toLowerCase()}`}>
         <img
           className="user-card__picture"
           src={user?.photoUrl ? user.photoUrl : "assets/svg/businessman.svg"}
@@ -53,7 +47,7 @@ const Welcome = () => {
         />
 
         <h3 className="user-card__user-name">{user?.displayName}</h3>
-        <span>Role: {user?.role}</span>
+        <span>{user?.role}</span>
       </div>
     </div>
   );
