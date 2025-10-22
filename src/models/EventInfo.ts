@@ -1,5 +1,6 @@
 import { FieldValue } from "firebase/firestore";
 import EventType from "../enums/EventType";
+import UserInfo from "./UserInfo";
 
 interface EventInfo {
   id: string;
@@ -12,7 +13,7 @@ interface EventInfo {
   likes: [];
   authorId: string;
   // new:
-  invited?: string[];
+  invited: UserInfo[];
   eventDate?: number | null;
 }
 

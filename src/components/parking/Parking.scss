@@ -19,6 +19,10 @@
 .parking__admin-buttons {
   display: flex;
   gap: 20px;
+
+  button {
+    padding: 20px;
+  }
 }
 
 .parking__create-parking-button,

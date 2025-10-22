@@ -86,8 +86,8 @@ const ParkingReservationModal = ({ parking, onClose }: ParkingSlotProps) => {
     let conflict = false;
     userReservationsSnap.forEach((docSnap) => {
       const data = docSnap.data() as ReservationFirestore;
-      const s = data.startTime.toDate();
-      const e = data.endTime.toDate();
+      const s = new Date(data.startTime);
+      const e = new Date(data.endTime);
       for (
         let d = new Date(startTime);
         d <= endTime;
@@ -120,8 +120,8 @@ const ParkingReservationModal = ({ parking, onClose }: ParkingSlotProps) => {
     await addDoc(reservationsRef, {
       userId: user.id,
       parkingSlotId: parking.id,
-      startTime: Timestamp.fromDate(startTime),
-      endTime: Timestamp.fromDate(endTime),
+      startTime: startTime.getTime(),
+      endTime: endTime.getTime(),
     });
 
     const reservationTimeFormatted = formatDateRange(startTime, endTime);

@@ -38,7 +38,6 @@ const NotificationsList = () => {
   );
 
   const [loading, setLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -64,10 +63,6 @@ const NotificationsList = () => {
   };
 
   if (!user) return null;
-
-  const visibleNotifications = showAll
-    ? notifications
-    : notifications.slice(0, 3);
 
   const handleClearNotifications = async () => {
     try {
@@ -107,8 +102,7 @@ const NotificationsList = () => {
   };
 
   return (
-    <div className="notifications-list">
-      {/* {notifications.length && ( */}
+    <div className="notifications-list-container">
       <div
         className={`notifications-list__notifications-header ${
           notificationsCount === 0 ? "no-notifications" : ""
@@ -129,53 +123,51 @@ const NotificationsList = () => {
           Mark all as read
         </button>
       </div>
-      {/* )} */}
-      {loading ? (
-        <div className="notifications-list__loading">Loading...</div>
-      ) : notifications.length === 0 ? (
-        <div className="notifications-list__empty">No notifications yet.</div>
-      ) : (
-        <>
-          <ul className="notifications-list__items">
-            {visibleNotifications.map((notif) => (
-              <li
-                key={notif.id}
-                className={`notification-item${
-                  notif.read
-                    ? " notification-item--read"
-                    : " notification-item--unread"
-                }`}
-                onClick={() => markAsRead(notif)}
-              >
-                <span className="notification-item__icon">
-                  <img
-                    src={
-                      typeIcons[notif.type] ||
-                      typeIcons[NotificationType.GENERAL]
-                    }
-                    alt={notif.type}
-                  />
-                </span>
-                <span className="notification-item__content">
-                  <span className="notification-item__text">{notif.text}</span>
-                  <span className="notification-item__timestamp">
-                    {new Date(notif.timestamp).toLocaleString()}
+      <div className="notifications-list u-pretty-scroll">
+        {/* {notifications.length && ( */}
+
+        {/* )} */}
+        {loading ? (
+          <div className="notifications-list__loading">Loading...</div>
+        ) : notifications.length === 0 ? (
+          <div className="notifications-list__empty">No notifications yet.</div>
+        ) : (
+          <>
+            <ul className="notifications-list__items ">
+              {notifications.map((notif) => (
+                <li
+                  key={notif.id}
+                  className={`notification-item${
+                    notif.read
+                      ? " notification-item--read"
+                      : " notification-item--unread"
+                  }`}
+                  onClick={() => markAsRead(notif)}
+                >
+                  <span className="notification-item__icon">
+                    <img
+                      src={
+                        typeIcons[notif.type] ||
+                        typeIcons[NotificationType.GENERAL]
+                      }
+                      alt={notif.type}
+                    />
                   </span>
-                </span>
-                {!notif.read && <span className="notification-item__dot" />}
-              </li>
-            ))}
-          </ul>
-          {notifications.length > 3 && (
-            <button
-              className="notifications-list__toggle"
-              onClick={() => setShowAll(!showAll)}
-            >
-              {showAll ? "See less" : "See more"}
-            </button>
-          )}
-        </>
-      )}
+                  <span className="notification-item__content">
+                    <span className="notification-item__text">
+                      {notif.text}
+                    </span>
+                    <span className="notification-item__timestamp">
+                      {new Date(notif.timestamp).toLocaleString()}
+                    </span>
+                  </span>
+                  {!notif.read && <span className="notification-item__dot" />}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
     </div>
   );
 };

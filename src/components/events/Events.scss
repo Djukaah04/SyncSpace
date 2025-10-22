@@ -23,6 +23,10 @@
   gap: 20px;
 
   .event-cards {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
     padding-right: 10px;
     border-radius: 10px;
     transition: max-height 0.3s ease;
@@ -59,11 +63,14 @@
 }
 
 .event-card {
+  flex-grow: 1;
+  width: 50%;
+  min-width: 300px;
   display: flex;
   background: $white;
   border-radius: 10px;
   padding: 0.75rem 1rem;
-  margin-bottom: 0.75rem;
+  // margin-bottom: 0.75rem;
   box-shadow: 0 2px 6px rgba($black, 0.1);
   border-left: 10px solid transparent;
 }
@@ -93,17 +100,56 @@
 }
 
 .event-card__info {
-  flex-basis: 60%;
+  min-width: 50%;
 }
 
 .event-card__invitees {
   flex-grow: 1;
+  height: 100px;
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  // gap: 5px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(31, 57, 89, 0.4);
+    border: 2px solid transparent;
+    transition: background-color 0.2s ease;
+    border-radius: 20px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(31, 57, 89, 0.7);
+  }
 }
 
 .event-card__invitee {
+  height: fit-content;
+  width: 120px;
+  // border: 1px solid black;
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 5px;
+  // overflow: hidden;
+  cursor: pointer;
+
+  img {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.2);
+  }
 }
 
 .events-list__create-event {

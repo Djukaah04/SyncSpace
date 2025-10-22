@@ -7,6 +7,7 @@ import React, { ChangeEvent, useState } from "react";
 import UserStatus from "../../enums/UserStatus";
 import { useNavigate } from "react-router-dom";
 import UserInfo from "../../models/UserInfo";
+import "./Register.scss";
 
 interface RegisterFormInputs {
   email: string;
@@ -65,7 +66,7 @@ const Register = () => {
       const userRef = doc(db, "users", userId);
       await setDoc(userRef, { photoUrl }, { merge: true });
     } catch (err) {
-      throw new Error("Greska pri postavljanju profilne slike." + err);
+      throw new Error("Greška pri postavljanju profilne slike: " + err);
     }
   };
 
@@ -78,9 +79,7 @@ const Register = () => {
   const onRegister: SubmitHandler<RegisterFormInputs> = async (
     formData: RegisterFormInputs
   ) => {
-    console.log("%c formData", "color: orange; font-size: 25px", formData);
     try {
-      console.log("%c auth", "color: orange; font-size: 25px", auth);
       const cred = await createUserWithEmailAndPassword(
         auth,
         formData.email,
@@ -99,120 +98,128 @@ const Register = () => {
       };
 
       await setDoc(doc(usersCollection, newUser.id), newUser);
-      uploadProfilePicture(cred.user.uid);
+      await uploadProfilePicture(cred.user.uid);
+
+      navigate("/login");
     } catch (err) {
-      setError("email", { type: "manual", message: "Invalid username" });
+      setError("email", { type: "manual", message: "Invalid email" });
       setError("password", { type: "manual", message: "Invalid password" });
-      throw new Error("Greska pri registraciji korisnika." + err);
+      console.error(err);
     }
   };
 
-  const goToLogin = () => {
-    navigate("/login");
-  };
+  const goToLogin = () => navigate("/login");
+
   return (
-    <form className="form register-form" onSubmit={handleSubmit(onRegister)}>
-      <img
-        onClick={goToLogin}
-        className="back-logo"
-        src="assets/svg/back.svg"
-        alt="back-logo"
-      />
-      <h1 className="register-form__title">Register</h1>
-      <div className="form__input-row">
-        <label htmlFor="register-display-name">
-          Display name: <span className="asterix">*</span>
-        </label>
-        <input
-          id="register-display-name"
-          {...register("displayName", {
-            required: "Display name is required",
-            minLength: {
-              value: 5,
-              message: "Minimum length is 5",
-            },
-          })}
+    <div className="register-page">
+      <form className="form register-form" onSubmit={handleSubmit(onRegister)}>
+        <img
+          onClick={goToLogin}
+          className="back-logo"
+          src="assets/svg/back.svg"
+          alt="back-logo"
         />
-        <div className="error-text">{errors.displayName?.message}</div>
-      </div>
-      <div className="form__input-row">
-        <label htmlFor="register-age">Age:</label>
-        <input
-          id="register-age"
-          type="number"
-          min={0}
-          {...register("age", {
-            min: {
-              value: 18,
-              message: "You must be over 18 years old",
-            },
-          })}
-        />
-        <div className="error-text">{errors.age?.message}</div>
-      </div>
-      <div className="form__input-row">
-        <label htmlFor="register-email">
-          Email <span className="asterix">*</span>
-        </label>
-        <input
-          id="register-email"
-          {...register("email", {
-            required: "Email is required",
-            pattern: {
-              value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-              message: "Please enter a valid email address",
-            },
-          })}
-        />
+        <h1 className="register-form__title">Register</h1>
 
-        <div className="error-text">{errors.email?.message}</div>
-      </div>
-      <div className="form__input-row">
-        <label htmlFor="register-password">
-          Password <span className="asterix">*</span>
-        </label>
-        <input
-          id="register-password"
-          {...register("password", {
-            required: "Password is required",
-            minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters long",
-            },
-          })}
-          type="password"
-        />
-
-        <div className="error-text">{errors.password?.message}</div>
-      </div>
-      <div className="form__input-row">
-        <label htmlFor="register-picture" className="picture-upload">
-          <img
-            src="assets/svg/upload.svg"
-            className="upload-logo"
-            alt="upload-logo"
+        <div className="form__input-row">
+          <label htmlFor="register-display-name">
+            Display name: <span className="asterix">*</span>
+          </label>
+          <input
+            id="register-display-name"
+            {...register("displayName", {
+              required: "Display name is required",
+              minLength: {
+                value: 5,
+                message: "Minimum length is 5",
+              },
+            })}
           />
-          <p>Upload Picture</p>
-        </label>
-        <input
-          id="register-picture"
-          {...register("picture", {
-            required: "Picture is required",
-          })}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-        <div className="profile-preview-container">
-          {preview && <img src={preview} alt="profile-preview" />}
+          <div className="error-text">{errors.displayName?.message}</div>
         </div>
 
-        <div className="error-text">{errors.picture?.message}</div>
-      </div>
-      <div className="register-container">
-        <input className="register" type="submit" value="REGISTER" />
-      </div>
-    </form>
+        <div className="form__input-row">
+          <label htmlFor="register-age">Age:</label>
+          <input
+            id="register-age"
+            type="number"
+            min={0}
+            {...register("age", {
+              min: {
+                value: 18,
+                message: "You must be over 18 years old",
+              },
+            })}
+          />
+          <div className="error-text">{errors.age?.message}</div>
+        </div>
+
+        <div className="form__input-row">
+          <label htmlFor="register-email">
+            Email <span className="asterix">*</span>
+          </label>
+          <input
+            id="register-email"
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                message: "Please enter a valid email address",
+              },
+            })}
+          />
+          <div className="error-text">{errors.email?.message}</div>
+        </div>
+
+        <div className="form__input-row">
+          <label htmlFor="register-password">
+            Password <span className="asterix">*</span>
+          </label>
+          <input
+            id="register-password"
+            type="password"
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters long",
+              },
+            })}
+          />
+          <div className="error-text">{errors.password?.message}</div>
+        </div>
+
+        <div className="form__input-row register-upload-button">
+          <label htmlFor="register-picture" className="picture-upload">
+            <img
+              src="assets/svg/upload.svg"
+              className="upload-logo"
+              alt="upload-logo"
+            />
+            <p>Upload Picture</p>
+          </label>
+          <input
+            id="register-picture"
+            type="file"
+            accept="image/*"
+            {...register("picture", { required: "Picture is required" })}
+            onChange={handleFileChange}
+          />
+
+          <div className="profile-preview-container">
+            {preview && <img src={preview} alt="profile-preview" />}
+          </div>
+
+          <div className="error-text">{errors.picture?.message}</div>
+        </div>
+
+        <div className="register-container">
+          <button className="register" type="submit">
+            REGISTER
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

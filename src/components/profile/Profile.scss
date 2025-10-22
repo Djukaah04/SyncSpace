@@ -1,23 +1,26 @@
 .profile {
+  position: relative;
   height: 100%;
   width: 100%;
-
   display: flex;
   flex-direction: column;
+  padding-top: 40px;
 }
 
-.profile__nav {
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
-  padding: 18px;
-  margin-bottom: 20px;
-}
+// .profile__nav {
+//   position: relative;
+//   display: flex;
+//   justify-content: flex-end;
+//   background-color: $dark-blue;
+//   // background-color: #3b82f6;
+//   padding: 10px;
+//   margin-bottom: 20px;
+// }
 
 .nav__back {
   position: absolute;
-  top: 22px;
-  left: 30px;
+  top: 10px;
+  left: 10px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -30,6 +33,12 @@
   &:hover img {
     transform: translateX(-5px);
   }
+}
+
+.profile__logout {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 .profile__picture-row {
@@ -100,6 +109,7 @@
   background-color: $white;
   border-radius: 20px;
   max-width: 400px;
+  padding-top: 30px;
   text-align: center;
   min-width: 250px;
 }
@@ -221,15 +231,17 @@
 }
 
 .car-select-list {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: repeat(10, 60px);
+  // justify-content: center;
+  // flex-wrap: wrap;
+  // align-items: stretch;
   background-color: white;
   border-radius: 20px;
-  padding: 20px 0;
+  padding: 0;
   row-gap: 25px;
-  margin-bottom: 0;
+  column-gap: 10px;
+  margin: 0;
 }
 
 .car-select-item {

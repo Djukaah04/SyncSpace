@@ -33,7 +33,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: $grey;
+  background-color: $white;
 }
 
 code {
@@ -82,6 +82,7 @@ input {
 }
 
 button {
+  position: relative;
   display: flex;
   align-items: center;
   padding: 6px 10px;
@@ -113,4 +114,14 @@ button:disabled {
     rgba(255, 221, 51, 0.72) 0%,
     rgba(255, 255, 255, 0.49) 59%
   ) !important;
+}
+
+.star-pin {
+  position: absolute;
+  top: -3px;
+  right: 5px;
+  color: $gold;
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 4;
 }

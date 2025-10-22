@@ -36,11 +36,11 @@ export const formatDateRange = (start: Date, end: Date): string => {
   }
 };
 
-export const formatDatePretty = (date: Date): string => {
-  const month = date.toLocaleString("en-US", { month: "long" });
+export const formatDatePretty = (
+  date: Date,
+  short: boolean = false
+): string => {
   const day = date.getDate();
-  const year = date.getFullYear();
-
   const suffix =
     day % 10 === 1 && day !== 11
       ? "st"
@@ -49,6 +49,15 @@ export const formatDatePretty = (date: Date): string => {
       : day % 10 === 3 && day !== 13
       ? "rd"
       : "th";
+
+  if (short) {
+    // primer: "Oct 1st"
+    const shortMonth = date.toLocaleString("en-US", { month: "short" });
+    return `${shortMonth} ${day}${suffix}`;
+  }
+
+  const month = date.toLocaleString("en-US", { month: "long" });
+  const year = date.getFullYear();
 
   const hours = date.getHours();
   const minutes = date.getMinutes().toString().padStart(2, "0");

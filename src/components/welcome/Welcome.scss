@@ -26,13 +26,26 @@
 }
 
 .user-info__welcome-title {
-  font-size: 30px;
-  font-weight: 500;
-  margin-top: 0;
+  font-size: 35px;
+  margin: 0;
+  font-family: $kabel-black;
+  font-weight: 900;
 }
 
 .user-info__info-item {
-  margin: 10px 0;
+  margin: 15px 0;
+}
+
+.info-item__reservation-time {
+  font-weight: 700;
+  margin-left: 5px;
+  color: $dark-blue;
+}
+
+.info-item__click-here {
+  display: inline;
+  margin-left: 5px;
+  background-color: $dark-blue;
 }
 
 .welcome__user-card {

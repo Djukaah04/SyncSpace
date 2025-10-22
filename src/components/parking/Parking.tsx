@@ -24,9 +24,13 @@ import DateSlider from "../../utils/date-slider/DateSlider";
 import ReservationFirestore from "../../store/types/ReservationFirestore";
 import ParkingStatus from "../../enums/ParkingStatus";
 import DeleteReservationsModal from "./delete-reservations-modal/DeleteReservationsModal";
+import UserRole from "../../enums/UserRole";
 
 const Parking = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isAdmin = user?.role === UserRole.ADMIN;
+
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   const loading: boolean = useSelector(
@@ -109,17 +113,23 @@ const Parking = () => {
     const reservationsRef = collection(db, "reservations");
     const currentDayReservationsQuery = query(
       reservationsRef,
-      where("startTime", "<=", Timestamp.fromMillis(dateForShow)),
-      where("endTime", ">=", Timestamp.fromMillis(dateForShow))
+      where("startTime", "<=", dateForShow),
+      where("endTime", ">=", dateForShow)
     );
     const unsubscribe = onSnapshot(currentDayReservationsQuery, (snapshot) => {
+      console.log("%c menjanje", "color: red; font-size: 25px");
       const currentReservations: ReservationInfo[] = snapshot.docs.map(
         (doc) => ({
           ...(doc.data() as ReservationFirestore),
           id: doc.id,
-          startTime: (doc.data() as ReservationFirestore).startTime.toMillis(),
-          endTime: (doc.data() as ReservationFirestore).endTime.toMillis(),
+          startTime: doc.data().startTime,
+          endTime: doc.data().endTime,
         })
+      );
+      console.log(
+        "%c currentReservations",
+        "color: orange; font-size: 25px",
+        currentReservations
       );
 
       const takenSlots: { slotId: string; userId: string }[] = Array.from(
@@ -224,20 +234,24 @@ const Parking = () => {
               </div>
             )
           )}
-        <div className="parking__admin-buttons">
-          <button
-            className="parking__create-parking-button"
-            onClick={openCreateParkingModal}
-          >
-            create new parking
-          </button>
-          <button
-            className="parking__delete-reservations-button"
-            onClick={openDeleteReservationsModal}
-          >
-            delete all reservations
-          </button>
-        </div>
+        {isAdmin && (
+          <div className="parking__admin-buttons">
+            <button
+              className="parking__create-parking-button"
+              onClick={openCreateParkingModal}
+            >
+              create new parking
+              <span className="star-pin">★</span>
+            </button>
+            <button
+              className="parking__delete-reservations-button"
+              onClick={openDeleteReservationsModal}
+            >
+              delete all reservations
+              <span className="star-pin">★</span>
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

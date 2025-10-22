@@ -20,6 +20,7 @@ import UserInfo from "../../models/UserInfo";
 import EventType from "../../enums/EventType";
 import NotificationType from "../../enums/NotificationType";
 import { sendNotification } from "../../services/notificationsService";
+import { formatDatePretty } from "../../services/formattingService";
 
 const Events = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -332,10 +333,9 @@ const Events = () => {
                       <h4>{event.title || "Untitled"}</h4>
                       <p>{event.comment}</p>
                       <small>
-                        Type: {event.type} •{" "}
-                        {event.eventDate
-                          ? new Date(event.eventDate).toLocaleDateString()
-                          : "No date"}
+                        <span>{event.type}</span> •{" "}
+                        {event.eventDate &&
+                          formatDatePretty(new Date(event.eventDate), true)}
                       </small>
                       {user && user.role === UserRole.ADMIN && (
                         <button
@@ -349,13 +349,16 @@ const Events = () => {
                     <div className="event-card__invitees">
                       {event.invited &&
                         event.invited.length > 0 &&
-                        event.invited.map((userId) => {
+                        event.invited.map((currentUser) => {
                           const invitedUser = users.find(
-                            (u) => u.id === userId
+                            (u) => u.id === currentUser.id
                           );
                           if (!invitedUser) return null;
                           return (
-                            <div key={userId} className="event-card__invitee">
+                            <div
+                              key={currentUser.id}
+                              className="event-card__invitee"
+                            >
                               <img
                                 src={
                                   invitedUser.photoUrl ||

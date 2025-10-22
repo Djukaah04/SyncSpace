@@ -169,15 +169,16 @@ const Profile = () => {
 
   return (
     <main className="profile">
-      <nav className={`profile__nav `}>
-        <span className="nav__back">
-          <img onClick={back} src="assets/svg/back.svg" alt="back" />
-        </span>
-        <button onClick={logout}>Log Out</button>
-      </nav>
+      <span className="nav__back">
+        <img onClick={back} src="assets/svg/back.svg" alt="back" />
+      </span>
+      <button className="profile__logout" onClick={logout}>
+        Log Out
+      </button>
 
       <div className="profile__info-container">
         <div className="profile__info-and-notifications">
+          <NotificationsList />
           <div className="profile__info">
             {user?.photoUrl && (
               <div
@@ -426,7 +427,6 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          <NotificationsList />
         </div>
         {!user?.carUrl && carSelectIsOpen && cars && (
           <div className="car-selection-popup" id="car-select">

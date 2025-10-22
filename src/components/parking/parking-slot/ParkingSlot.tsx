@@ -156,7 +156,11 @@ const ParkingSlot = ({ parking }: ParkingSlotProps) => {
               className="parking-slot__car"
             />
           ) : (
-            occupyingUser?.displayName
+            <img
+              src={occupyingUser?.photoUrl}
+              alt="user-image"
+              className="parking-slot__pic-placeholder"
+            />
           )
         ) : (
           <span className="disabled-label">X</span>
