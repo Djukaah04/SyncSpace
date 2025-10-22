@@ -251,7 +251,7 @@ const Office: React.FC = () => {
             <div
               key={`seat-${seat.id}`}
               className={`seat ${seat.reserved ? "reserved" : ""} ${
-                reservedByTeammate ? "teammate" : ""
+                reservedByMe ? "me" : ""
               } ${isSelected ? "selected" : ""}`}
               style={{
                 gridColumn: `${gridCol}`,
@@ -267,10 +267,13 @@ const Office: React.FC = () => {
               aria-disabled={seat.reserved}
             >
               <span className="seat-label">{seat.id}</span>
-              {reservedByMe && (
+              {reservedByTeammate && (
                 <div className="teammate-indicator">
                   <span className="teammate-indicator__star">★</span>
                 </div>
+                // <div className="teammate-indicator">
+                //   <span className="teammate-indicator__star">★</span>
+                // </div>
               )}
             </div>
           );
@@ -283,9 +286,8 @@ const Office: React.FC = () => {
             {selectedSeat.reserved ? (
               <>
                 <h3 className="reservation-form__seat-title">
-                  SEAT {selectedSeat.id}
+                  Seat {selectedSeat.id}
                   <div className="u-color-red reservation-form__taken">
-                    {" "}
                     TAKEN
                   </div>
                 </h3>
@@ -296,7 +298,9 @@ const Office: React.FC = () => {
                     );
                     return (
                       reserver && (
-                        <div className="reserver-info">
+                        <div
+                          className={`reserver-info is-${user?.role?.toLowerCase()}--short`}
+                        >
                           <img
                             className="reserver-info__picture"
                             src={

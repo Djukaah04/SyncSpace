@@ -46,6 +46,8 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    border-radius: 20px;
+    padding-top: 15px;
     gap: 12px;
   }
 
@@ -59,8 +61,8 @@
   }
 
   &__avatar {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid $beige;
@@ -81,7 +83,8 @@
   }
 
   &__car-img {
-    width: 100px;
+    width: 150px;
+    margin-bottom: 10px;
     object-fit: contain;
   }
 
@@ -121,5 +124,29 @@
     &:active {
       transform: translateY(0);
     }
+  }
+}
+
+.reservation-details-modal__close-btn--manager {
+  background-color: rgba(red, 0.6);
+
+  &:hover {
+    background-color: rgba(red, 0.8);
+  }
+}
+
+.reservation-details-modal__close-btn--admin {
+  background-color: rgba($gold, 0.6);
+
+  &:hover {
+    background-color: rgba($gold, 0.8);
+  }
+}
+
+.reservation-details-modal__close-btn--worker {
+  background-color: rgba($dark-blue, 0.6);
+
+  &:hover {
+    background-color: rgba($dark-blue, 0.8);
   }
 }

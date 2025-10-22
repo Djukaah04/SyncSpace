@@ -53,8 +53,11 @@ const ParkingSlot = ({ parking }: ParkingSlotProps) => {
       let maxEnd: Date | undefined = undefined;
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        if (data.endTime && data.endTime.toDate) {
-          const end = data.endTime.toDate();
+        console.log("%c data", "color: orange; font-size: 25px", data);
+        console.log("%c maxEnd", "color: orange; font-size: 25px", maxEnd);
+        if (data.endTime) {
+          console.log("%c uso ", "color: lightgreen; font-size: 25px");
+          const end = new Date(data.endTime);
           if (!maxEnd || end > maxEnd) maxEnd = end;
         }
       });

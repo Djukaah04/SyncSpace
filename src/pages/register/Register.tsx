@@ -30,10 +30,16 @@ const Register = () => {
     formState: { errors },
     setError,
     clearErrors,
+    watch,
   } = useForm<RegisterFormInputs>({
     mode: "onBlur",
     reValidateMode: "onChange",
   });
+
+  const displayName = watch("displayName");
+  const email = watch("email");
+  const password = watch("password");
+  const picture = watch("picture");
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -110,6 +116,9 @@ const Register = () => {
 
   const goToLogin = () => navigate("/login");
 
+  const isDisabled =
+    !displayName || displayName.trim().length < 2 || !email || !password;
+
   return (
     <div className="register-page">
       <form className="form register-form" onSubmit={handleSubmit(onRegister)}>
@@ -130,8 +139,8 @@ const Register = () => {
             {...register("displayName", {
               required: "Display name is required",
               minLength: {
-                value: 5,
-                message: "Minimum length is 5",
+                value: 2,
+                message: "Minimum length is 2",
               },
             })}
           />
@@ -214,7 +223,7 @@ const Register = () => {
         </div>
 
         <div className="register-container">
-          <button className="register" type="submit">
+          <button disabled={isDisabled} className="register" type="submit">
             REGISTER
           </button>
         </div>

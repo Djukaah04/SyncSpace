@@ -33,7 +33,9 @@ const ReservationDetailsModal: React.FC<ReservationDetailsModalProps> = ({
         </h2>
 
         <div className="reservation-details-modal__content">
-          <div className="reservation-details-modal__left">
+          <div
+            className={`reservation-details-modal__left is-${user.role?.toLowerCase()}--short`}
+          >
             {photoUrl && (
               <img
                 className="reservation-details-modal__avatar"
@@ -55,7 +57,6 @@ const ReservationDetailsModal: React.FC<ReservationDetailsModalProps> = ({
                 {user.email || "-"}
               </span>
             </div>
-
             {reservationEnd && (
               <div className="reservation-details-modal__row">
                 <span className="reservation-details-modal__label">
@@ -86,7 +87,7 @@ const ReservationDetailsModal: React.FC<ReservationDetailsModalProps> = ({
         </div>
 
         <button
-          className="reservation-details-modal__close-btn"
+          className={`reservation-details-modal__close-btn reservation-details-modal__close-btn--${user.role?.toLowerCase()}`}
           onClick={onClose}
         >
           Close

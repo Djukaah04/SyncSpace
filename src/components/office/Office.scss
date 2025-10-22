@@ -42,7 +42,7 @@
 }
 
 .seat.reserved {
-  background: #ffb3b3;
+  background: #f97b7b;
   cursor: not-allowed;
   transform: none;
 }
@@ -52,35 +52,50 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
-.seat.teammate {
-  color: #fff;
-  background: #ff7070;
+.seat.me {
+  // color: #fff;
+  background: $gold;
 }
 
 .seat-label {
   pointer-events: none;
 }
 
+$spin-duration: 3s; // što manji broj = brža rotacija
+$spin-ease: linear; // linearno da rotacija bude ujednačena
 .teammate-indicator {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: 0;
+  right: 0;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  background: black;
+  background: transparent;
   color: white;
   width: 20px;
   height: 20px;
   border-radius: 50%;
   font-size: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  // box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+
+  transform-origin: center center;
+  animation: spin $spin-duration $spin-ease infinite;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .teammate-indicator__star {
   margin-top: -3px;
+  font-size: 18px;
+  color: $yellow;
 }
 
 .reservation-form {
@@ -88,18 +103,23 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
+  border-radius: 15px;
 }
 
 .reservation-form__seat-title {
-  font-size: 20px;
-  font-weight: 900;
+  font-size: 30px;
+  font-weight: 600;
   text-align: center;
   margin: 0;
-  margin-bottom: 10px;
+  // color: grey;
 }
 
 .reservation-form__taken {
-  font-weight: 500;
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: 25px;
+  letter-spacing: 5px;
+  font-family: $kabel-black;
 }
 
 .reserver-info {
@@ -107,6 +127,8 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  border-radius: 15px;
+  padding-top: 20px;
 }
 
 .reserver-info__info-row {
@@ -171,14 +193,16 @@
   background: #d6f0ff;
 }
 .legend-box.reserved {
-  background: #ffb3b3;
+  background: #ff7070;
 }
 .legend-box.teammate {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: $black;
-  color: $white;
+  background: transparent;
+  font-size: 22px;
+  padding-bottom: 3px;
+  color: $yellow;
 }
 .legend-box.me {
   background: $gold;

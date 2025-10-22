@@ -98,6 +98,15 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.is-worker--short {
+  background: $dark-blue !important;
+  background: linear-gradient(
+    180deg,
+    rgba($dark-blue, 0.72) 0%,
+    rgba(255, 255, 255, 0.49) 31%
+  ) !important;
+}
+
 .is-manager {
   background: #ff0000 !important;
   background: linear-gradient(
@@ -107,12 +116,30 @@ button:disabled {
   ) !important;
 }
 
+.is-manager--short {
+  background: #ff0000 !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 0, 0, 0.72) 0%,
+    rgba(255, 255, 255, 0.49) 31%
+  ) !important;
+}
+
 .is-admin {
   background: #ffdd33cc !important;
   background: linear-gradient(
     180deg,
     rgba(255, 221, 51, 0.72) 0%,
     rgba(255, 255, 255, 0.49) 59%
+  ) !important;
+}
+
+.is-admin--short {
+  background: RGBA(255, 221, 51, 0.72) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 221, 51, 0.72) 0%,
+    rgba(255, 255, 255, 0.49) 31%
   ) !important;
 }
 
